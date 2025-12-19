@@ -10,7 +10,7 @@ export default function WhatsAppButton() {
         asChild
       >
         <a 
-          href="https://wa.me/521442506667?text=Hola,%20quiero%20cotizar%20mi%20servicio"
+          href="https://wa.me/5214425016667?text=Hola,%20quiero%20cotizar%20mi%20servicio"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Contactar por WhatsApp"

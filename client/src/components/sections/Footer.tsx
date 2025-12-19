@@ -23,7 +23,7 @@ export default function Footer() {
             <h4 className="font-bold mb-4">Contacto</h4>
             <ul className="space-y-2 text-sm text-slate-400">
               <li>Querétaro, Qro. México</li>
-              <li>Tel: 442 506 6667</li>
+              <li>Tel: 442 501 6667</li>
               <li>contacto@lavadoqro.com</li>
             </ul>
           </div>

@@ -31,7 +31,7 @@ export default function Hero() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
           <Button size="lg" className="bg-accent hover:bg-accent/90 text-white font-bold text-lg px-8 h-14 w-full sm:w-auto shadow-lg hover:scale-105 transition-transform" asChild>
-            <a href="https://wa.me/521442506667?text=Hola,%20quiero%20cotizar%20mi%20servicio" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/5214425016667?text=Hola,%20quiero%20cotizar%20mi%20servicio" target="_blank" rel="noopener noreferrer">
               Cotizar por WhatsApp
             </a>
           </Button>

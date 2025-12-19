@@ -24,8 +24,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground">Teléfono / WhatsApp</h3>
-                  <a href="tel:+524425066667" className="text-muted-foreground hover:text-primary transition-colors">
-                    442 506 6667
+                  <a href="tel:+5214425016667" className="text-muted-foreground hover:text-primary transition-colors">
+                    442 501 6667
                   </a>
                 </div>
               </div>
