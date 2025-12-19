@@ -7,6 +7,7 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import WhatsAppButton from "@/components/sections/WhatsAppButton";
 import TrustBadge from "@/components/sections/TrustBadge";
+import Reviews from "@/components/sections/Reviews";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <Hero />
         <TrustBadge />
         <Services />
+        <Reviews />
         <ServiceZones />
         <Pricing />
         <Contact />
