@@ -28,9 +28,9 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 font-brand font-black text-3xl text-primary hover:opacity-90 transition-opacity tracking-wide">
+        <Link href="/" className="flex items-center gap-3 font-brand font-black text-3xl text-black hover:opacity-90 transition-opacity tracking-wide" style={{ WebkitTextStroke: "1.5px hsl(var(--primary))" }}>
             <img src={logo} alt="MonsterCo" className="h-12 w-auto object-contain" />
-            <span className="hidden sm:inline-block pt-1">MonsterCo</span>
+            <span className="pt-1">MonsterCo</span>
         </Link>
 
         {/* Desktop Menu */}
