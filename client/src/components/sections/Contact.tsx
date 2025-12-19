@@ -36,8 +36,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground">Correo Electrónico</h3>
-                  <a href="mailto:contacto@lavadoqro.com" className="text-muted-foreground hover:text-primary transition-colors">
-                    contacto@lavadoqro.com
+                  <a href="mailto:lavadodetinacosqueretaro@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                    lavadodetinacosqueretaro@gmail.com
                   </a>
                 </div>
               </div>

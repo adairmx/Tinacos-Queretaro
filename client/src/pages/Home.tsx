@@ -6,6 +6,7 @@ import Pricing from "@/components/sections/Pricing";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import WhatsAppButton from "@/components/sections/WhatsAppButton";
+import TrustBadge from "@/components/sections/TrustBadge";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <TrustBadge />
         <Services />
         <ServiceZones />
         <Pricing />

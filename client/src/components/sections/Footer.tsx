@@ -24,7 +24,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-400">
               <li>Querétaro, Qro. México</li>
               <li>Tel: 442 501 6667</li>
-              <li>contacto@lavadoqro.com</li>
+              <li>lavadodetinacosqueretaro@gmail.com</li>
             </ul>
           </div>
         </div>
