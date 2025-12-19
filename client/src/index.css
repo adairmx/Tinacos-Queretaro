@@ -36,6 +36,7 @@
   --radius-xl: calc(var(--radius) + 4px);
   --font-sans: 'Inter', sans-serif;
   --font-heading: 'Montserrat', sans-serif;
+  --font-brand: 'Passion One', cursive;
 }
 
 :root {

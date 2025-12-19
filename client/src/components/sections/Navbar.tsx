@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Menu, X, Droplets } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import logo from "@assets/Logo-Monster-sin-fondo_1766172236864.webp";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,9 +28,9 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-heading font-bold text-xl text-primary hover:opacity-90 transition-opacity">
-            <Droplets className="h-6 w-6" />
-            <span>LavadoQro</span>
+        <Link href="/" className="flex items-center gap-3 font-brand font-black text-3xl text-primary hover:opacity-90 transition-opacity tracking-wide">
+            <img src={logo} alt="MonsterCo" className="h-12 w-auto object-contain" />
+            <span className="hidden sm:inline-block pt-1">MonsterCo</span>
         </Link>
 
         {/* Desktop Menu */}

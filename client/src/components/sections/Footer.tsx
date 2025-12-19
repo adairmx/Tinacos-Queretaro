@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="font-heading font-bold text-xl mb-4">LavadoQro</h3>
+            <h3 className="font-brand font-black text-2xl mb-4 tracking-wide">MonsterCo</h3>
             <p className="text-slate-400 text-sm max-w-xs">
               Servicio profesional de limpieza y desinfección de sistemas de almacenamiento de agua en Querétaro.
             </p>
@@ -30,7 +30,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-slate-800 pt-8 text-center text-xs text-slate-500">
-          <p>&copy; {new Date().getFullYear()} LavadoQro. Todos los derechos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} MonsterCo. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>
