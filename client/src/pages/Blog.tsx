@@ -25,14 +25,6 @@ export default function Blog() {
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
               Aprende sobre el mantenimiento de tu tinaco, cisterna y consejos para ahorrar agua y cuidar tu salud.
             </p>
-            <Button variant="outline" asChild>
-              <Link href="/admin/blog">
-                <a className="flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  Escribir Artículo (Demo)
-                </a>
-              </Link>
-            </Button>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

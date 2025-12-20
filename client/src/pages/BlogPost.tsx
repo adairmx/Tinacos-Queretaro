@@ -1,7 +1,7 @@
 import { useRoute, Link } from "wouter";
 import { initialPosts } from "@/data/blog";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, User, Share2 } from "lucide-react";
+import { Calendar, User, Share2 } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import NotFound from "@/pages/not-found";
@@ -21,18 +21,17 @@ export default function BlogPost() {
       <Navbar />
       
       <main className="py-20">
-        <article className="container mx-auto px-4 max-w-4xl">
-          <Button variant="ghost" size="sm" className="mb-8 hover:text-primary -ml-4" asChild>
-            <Link href="/blog">
-              <a className="flex items-center gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Volver al Blog
-              </a>
-            </Link>
-          </Button>
-
+        <article className="container mx-auto px-4 max-w-3xl">
           <header className="mb-10 text-center">
-            <h1 className="font-heading text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+            <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-xl mb-10">
+              <img 
+                src={post.image} 
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <h1 className="font-heading text-2xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight">
               {post.title}
             </h1>
             
@@ -46,18 +45,16 @@ export default function BlogPost() {
                 {post.author}
               </div>
             </div>
-
-            <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-xl mb-10">
-              <img 
-                src={post.image} 
-                alt={post.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
           </header>
 
-          <div className="prose prose-lg prose-slate mx-auto max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-primary prose-a:text-accent prose-img:rounded-xl">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+          <div className="prose prose-lg prose-slate mx-auto max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-primary prose-a:text-accent prose-img:rounded-xl prose-p:mb-8 prose-p:leading-relaxed">
+            <ReactMarkdown components={{
+              p: ({children}) => <p className="mb-8 leading-relaxed text-slate-700">{children}</p>,
+              h2: ({children}) => <h2 className="text-2xl font-bold mt-12 mb-6 text-primary">{children}</h2>,
+              h3: ({children}) => <h3 className="text-xl font-bold mt-10 mb-4 text-primary">{children}</h3>
+            }}>
+              {post.content}
+            </ReactMarkdown>
           </div>
           
           <div className="mt-12 pt-8 border-t border-border flex justify-between items-center">
