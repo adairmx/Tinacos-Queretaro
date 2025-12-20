@@ -56,7 +56,7 @@ export default function Navbar() {
                 <span className="font-brand font-black text-4xl text-black leading-none tracking-wide" style={{ WebkitTextStroke: "1px hsl(var(--primary))" }}>
                     MonsterCo
                 </span>
-                <span className="text-[0.65rem] sm:text-xs font-bold text-primary uppercase tracking-wider leading-tight">
+                <span className="text-[0.65rem] sm:text-xs font-bold text-black uppercase tracking-wider leading-tight">
                     Lavado de tinacos y cisternas
                 </span>
             </div>

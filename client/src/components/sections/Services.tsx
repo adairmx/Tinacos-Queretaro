@@ -7,14 +7,14 @@ export default function Services() {
     {
       title: "Lavado de Tinacos",
       description: "Eliminamos sedimentos, bacterias y algas de tu tinaco para asegurar la calidad del agua en tu hogar.",
-      features: ["Desinfección profunda", "Revisión de flotador", "Sin desperdiciar agua", "Duración: 45-60 min"],
+      features: ["Desinfección profunda", "Revisión de flotador", "Sin desperdiciar agua", "Duración: 1-2 horas", "Personal capacitado"],
       image: tinacoImg,
       alt: "Lavado de tinaco residencial"
     },
     {
       title: "Lavado de Cisternas",
       description: "Limpieza profesional de cisternas con equipo especializado para espacios confinados.",
-      features: ["Extracción de lodos", "Desinfección de paredes", "Revisión de bomba", "Personal capacitado"],
+      features: ["Extracción de sedimentos", "Desinfección de paredes", "Revisión de bomba", "Personal capacitado", "Duración: 1-2 horas"],
       image: cisternaImg,
       alt: "Lavado de cisterna subterránea"
     }

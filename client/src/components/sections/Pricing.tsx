@@ -5,7 +5,7 @@ export default function Pricing() {
   const plans = [
     {
       name: "Básico - Tinaco",
-      price: "Desde $450",
+      price: "Desde $749*",
       description: "Para tinacos de hasta 1,100 litros",
       features: [
         "Lavado interior",
@@ -17,10 +17,10 @@ export default function Pricing() {
     },
     {
       name: "Paquete Completo",
-      price: "Desde $1,200",
+      price: "Desde $1,698",
       description: "Tinaco (1,100L) + Cisterna (5,000L)",
       features: [
-        "Ahorro de $150",
+        "Ahorro garantizado",
         "Lavado profundo de ambos",
         "Desinfección total",
         "Revisión de sistema de bombeo",
@@ -30,10 +30,10 @@ export default function Pricing() {
     },
     {
       name: "Cisterna",
-      price: "Desde $900",
+      price: "Desde $949",
       description: "Para cisternas de hasta 5,000 litros",
       features: [
-        "Extracción de lodos",
+        "Extracción de sedimentos",
         "Lavado a presión",
         "Desinfección",
         "Revisión de válvula pichancha"
@@ -103,8 +103,9 @@ export default function Pricing() {
           ))}
         </div>
         
-        <div className="mt-12 text-center text-sm text-muted-foreground">
-          <p>* Los precios pueden variar dependiendo de las condiciones y ubicación exacta.</p>
+        <div className="mt-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
+          <p>*Precio para clientes recurrentes que recontratan servicio dentro de los 12 meses siguientes al ultimo servicio.</p>
+          <p className="mt-2">** Los precios pueden variar dependiendo de las condiciones y ubicación exacta.</p>
         </div>
       </div>
     </section>
