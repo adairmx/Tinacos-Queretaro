@@ -175,5 +175,154 @@ Basados en nuestra experiencia lavando tinacos y cisternas durante más de 10 a�
 
 Creemos que una cisterna aunque tiene factores a favor, en el largo plazo puede traer más dolores de cabeza que soluciones.
     `
+  },
+  {
+    id: "4",
+    title: "¿Hacia donde cierra una llave de agua que no deja de girar?",
+    slug: "hacia-donde-cierra-una-llave-de-agua-que-no-deja-de-girar",
+    excerpt: "Explicamos el sentido en el que tienes que girar una llave convencional para saber si la estás abriendo o cerrando. Sin embargo hay un tipo de llaves que aunque siguen este principio...",
+    date: "10 Jan 2024",
+    author: "MonsterCo",
+    image: "/attached_assets/generated_images/water_valve_quarter_turn_open_vs_closed.png",
+    content: `
+En nuestro artículo anterior que puedes encontrar aquí, explicamos el sentido en el que tienes que girar una llave convencional para saber si la estás abriendo o cerrando.
+
+Explicamos que dicho método será útil para todas las llaves de rosca sin excepción y debería ser útil para todas las demás llaves, sin embargo hay un tipo de llaves que aunque siguen este principio y estándar, en ocasiones nos dan problemas porque nunca dejan de girar.
+
+## ¿Qué tipo de llaves nunca dejan de girar?
+
+Las llaves de apertura rápida, también conocidas como llaves de 1/4 de vuelta.
+
+En principio funcionan igual que las demás lo que sucede es que suelen tener un tope que está integrado en la manilla y a veces con el desgaste se barre o se rompe y entonces ya no deja de dar vuelta cuando la giramos. En ese momento ya no sabemos si está abierta o cerrada.
+
+### ¿Entonces como saber si está abierta o cerrada?
+
+Afortunadamente es fácil. Este tipo de llaves también se rigen bajo otro estándar. Basta con mirar hacia donde está la manilla.
+
+Si la manilla está en el mismo sentido del tubo, entonces la llave está abierta.
+
+Si el maneral está perpendicular a la tubería ( a 90 grados) entonces la llave o válvula está cerrada.
+
+Y eso es todo. Pero puede ser que te estés enfrentando a otro problema y la llave de agua que intentas cerrar no sea de este tipo sino de rosca.
+    `
+  },
+  {
+    id: "5",
+    title: "Dispositivo anti sarro | Tipo ionizador ¿Funciona?",
+    slug: "dispositivo-antisarro-tipo-ionizador-funciona",
+    excerpt: "Los dispositivos de este tipo que dicen evitar y combatir el sarro existente, lo hacen mediante imanes, los cuales pretenden invertir la polaridad de elementos en el agua...",
+    date: "22 Jan 2024",
+    author: "MonsterCo",
+    image: "/attached_assets/generated_images/anti_scale_device_ionizer.png",
+    content: `
+Los dispositivos de este tipo que dicen evitar y combatir el sarro existente, lo hacen mediante imanes, los cuales pretenden invertir la polaridad de elementos en el agua tales como magnesio, potasio, sodio y calcio.
+
+Al cambiar la polaridad se evita que se formen cristales. Son dispositivos que no necesitan instalación ni baterías, simplemente los arrojas al tinaco y/o cisterna y ya está.
+
+Este tipo de dispositivos comúnmente son un tubo plástico sellado que en su interior contiene imanes de neodimio.
+
+A diferencia de los dispositivos anti sarro de tipo ablandador, estos no liberan ninguna sustancia. Los fabricantes de este tipo de dispositivos dicen que puede durar hasta 30 años.
+
+Ahora bien, yendo directamente al punto y de acuerdo a nuestra experiencia diaria donde nos hemos encontrado este tipo de dispositivos en los tinacos que lavamos en repetidas ocasiones:
+
+**Realmente sirven?** Bueno, en nuestra experiencia no…
+
+**Todos los días nos encontramos depósitos de agua que debido a falta de mantenimiento están llenos de incrustaciones de sarro.**
+
+Muchos de esos tinacos y cisternas los encontramos con estos dispositivos tipo ionizador que trabajan cambiando la polaridad de las sustancias en el agua.
+
+**En ninguno de estos casos hemos visto un depósito que teniendo uno de estos dispositivos ionizadores, no tenga sarro incrustado.**
+
+En otras palabras, aún habiendo tenido este dispositivo, los tinacos y/o cisternas que lavamos, los hemos encontrado con sarro.
+
+Nuestra teoría es que aunque pueda ser cierto el principio por el que se rigen, el dispositivo es muy pequeño y el tinaco o cisterna en si, en proporción es demasiado grande como para que este dispositivo pueda actuar.
+
+Por nuestra experiencia, NO recomendamos invertir en este tipo de dispositivos, ya que no cumplen lo que prometen.
+    `
+  },
+  {
+    id: "6",
+    title: "CPVC, Tuboplus o cobre | Cuál es la mejor tubería?",
+    slug: "cpvc-tuboplus-o-cobre-cual-es-la-mejor-tuberia",
+    excerpt: "A menudo me preguntan cual es la mejor tubería que puede uno instalar en su casa y aunque podemos considerar muchos factores, la respuesta es en mi opinión muy fácil...",
+    date: "05 Feb 2024",
+    author: "MonsterCo",
+    image: "/attached_assets/generated_images/copper_vs_cpvc_pipe_comparison.png",
+    content: `
+A menudo me preguntan cual es la mejor tubería que puede uno instalar en su casa y aunque podemos considerar muchos factores, la respuesta es en mi opinión muy fácil.
+
+Vamos a ser claros y evitémonos leer todo este artículo si lo que estás buscando es la tubería que menos problemas te va a dar: La mejor de todas (y por mucho) es la TUBERÍA DE COBRE.
+
+No se oxida, es más resistente, tiene cualidades antibacterianas y te va a durar toda la vida. Eso si, vas a gastar entre 3 y 7 veces más pero querías una respuesta rápida y sin enredos no? En serio, siempre recomendaré tubería de cobre por sobre todas las demás opciones.
+
+Ahora, si consideramos otros factores incluyendo costos, puede que quieras usar CPVC o PPR (Tuboplus). A continuación hablaremos de las ventajas y desventajas de cada uno de los materiales mencionados en este artículo.
+
+**Tuberías de CPVC:**
+
+El CPVC (policloruro de vinilo clorado) es un plástico termoplástico utilizado para la fabricación de tuberías. Es una alternativa popular al PVC (policloruro de vinilo) ya que es más resistente al calor y al fuego.
+
+*Ventajas:* Durabilidad, fácil instalación, resistencia a químicos y bajo costo.
+*Desventajas:* No apto para agua muy caliente, no resistente a luz UV.
+
+**Tuberías de PPR (Tuboplus):**
+
+El PPR (polipropileno random) es un tipo de plástico utilizado para la fabricación de tuberías. Es una opción popular para sistemas de plomería de agua fría y caliente.
+
+*Ventajas:* Alta resistencia térmica, bajo costo, fácil instalación (termofusión), durabilidad.
+*Desventajas:* No apto para agua hirviendo, menor resistencia a presión que el cobre.
+
+**Tuberías de cobre:**
+
+El cobre es uno de los materiales más antiguos utilizados en la fabricación de tuberías.
+
+*Ventajas:* Durabilidad extrema, resistencia a la corrosión, excelente conductor térmico, antibacteriano.
+*Desventajas:* Costo elevado, instalación más compleja (soldadura), vulnerable a congelación extrema.
+
+En resumen, cada material de tubería tiene sus ventajas y desventajas. La elección del material de tubería adecuado dependerá de varios factores, como la aplicación, el presupuesto y las preferencias personales.
+    `
+  },
+  {
+    id: "7",
+    title: "Alto | Antes de comprar una tapa para tu tinaco, lee esto",
+    slug: "tu-tinaco-se-quedo-sin-tapa",
+    excerpt: "Descubrir que tu tinaco perdió su tapa es algo muy habitual. Ya sea por que lo cerraron mal o porque se la robaron, el punto es que si te quedaste sin tapa, tienes un gran problema...",
+    date: "18 Feb 2024",
+    author: "MonsterCo",
+    image: "/attached_assets/generated_images/water_tank_missing_lid_problem.png",
+    content: `
+**Descubrir que tu tinaco perdió su tapa es algo muy habitual.**
+
+Ya sea por que lo cerraron mal o porque se la robaron (aunque esto último parece más un mito urbano pues nunca hemos podido confirmar que exista gente que se las robe), el punto es que si te quedaste sin tapa, tienes un gran problema pues el agua que contiene el depósito se quedará expuesta a la intemperie y peor aún a los rayos directos del sol, lo cual generará que el agua y las paredes internas del tinaco se pongan verdes y se comiencen a reproducir diversos animales como larvas de mosquito, arañas y en ocasiones hasta cucarachas.
+
+En nuestra amplia experiencia hemos visto muchos tinacos destapados y nos ha tocado conseguir tapas para diversas marcas y modelos, por lo cual podemos hablarte con autoridad:
+
+**NO HAY tal cosa como una TAPA UNIVERSAL.**
+
+Que significa esto: Que las tapas que venden en las ferreterías o en sitios como mercadolibre.com, no siempre le van a quedar a tu tinaco (como te hacen creer) y si bien la gran mayoría son adaptables, algunas veces tampoco se van a poder adaptar.
+
+**Por qué no hay tapas universales?**
+
+Sencillo, porque cada fabricante usa sus propias medidas y sistemas de cierre.
+
+**Hay sistemas de cierre como el de Rotoplas que están basados en “clic”**, pues la tapa tiene unas pequeñas pestañas que embonan perfectamente en el arillo base del tinaco.
+
+**Hay sistemas como el de Aquaplas que tienen rosca**, si; como si fuera una taparrosca de refresco solo que mucho más grande.
+
+Entonces, por lógica un sistema no es compatible con el otro, dicho de otra forma no le podemos poner una tapa Rotoplas a un tinaco Aquaplas.
+
+**Por qué no todas las tapas son adaptables?**
+
+Bueno, aunque es cierto que la gran mayoría de tapas genéricas son adaptables, lo cierto es que tienes que saber que en algunos casos no es así y si la compras, vas a perder tu dinero.
+
+**En el caso de Rotoplas, no es posible adaptar una tapa genérica**
+
+Aunque en alguna ocasión tuvimos que hacerlo, no lo volveríamos a hacer. Adaptar una tapa suele ser sencillo porque en muchos casos vienen atornilladas con pijas, Rotoplas no lo hace así si no que por el contrario el arillo de sujeción de sus tinacos, viene termo-fusionado al cuello del tinaco y al tratar de retirarlo, puedes dañar la estructura del tinaco en si causando un daño irreparable.
+
+La solución: Comprar la tapa original Rotoplas.
+
+**En resumen: Esto de comprar y cambiar una tapa, puede ser un dolor de cabeza si se hace sin saber.**
+
+Si tienes dudas, contáctanos y te decimos que hacer para obtener la tapa adecuada y como instalarla sin complicaciones.
+    `
   }
 ];
