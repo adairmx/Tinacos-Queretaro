@@ -51,7 +51,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <img src={logo} alt="MonsterCo" className="h-14 w-auto object-contain" />
+            <img src={logo} alt="MonsterCo" className="h-10 w-auto object-contain" />
             <div className="flex flex-col">
                 <span className="font-brand font-black text-4xl text-black leading-none tracking-wide" style={{ WebkitTextStroke: "1px hsl(var(--primary))" }}>
                     MonsterCo
@@ -63,7 +63,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6">
           {links.map((link) => (
             <a
               key={link.name}
@@ -82,7 +82,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">

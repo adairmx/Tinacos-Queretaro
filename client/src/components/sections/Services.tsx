@@ -7,7 +7,7 @@ export default function Services() {
     {
       title: "Lavado de Tinacos",
       description: "Eliminamos sedimentos, bacterias y algas de tu tinaco para asegurar la calidad del agua en tu hogar.",
-      features: ["Desinfección profunda", "Revisión de flotador", "Sin desperdiciar agua", "Duración: 1-2 horas", "Personal capacitado"],
+      features: ["Desinfección profunda", "Revisión de flotador", "Duración: 1-2 horas", "Personal capacitado"],
       image: tinacoImg,
       alt: "Lavado de tinaco residencial"
     },
