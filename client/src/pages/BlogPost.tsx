@@ -1,18 +1,35 @@
-import { useRoute, Link } from "wouter";
-import { initialPosts } from "@/data/blog";
+import { useRoute } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, Share2 } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import NotFound from "@/pages/not-found";
 import ReactMarkdown from 'react-markdown';
+import type { BlogPost as BlogPostType } from "@shared/schema";
 
 export default function BlogPost() {
   const [match, params] = useRoute("/blog/:slug");
   
   if (!match) return <NotFound />;
 
-  const post = initialPosts.find(p => p.slug === params.slug);
+  const { data: post, isLoading } = useQuery<BlogPostType>({
+    queryKey: [`/api/blog/${params.slug}`],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background font-sans">
+        <Navbar />
+        <main className="py-20">
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-muted-foreground">Cargando artículo...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!post) return <NotFound />;
 

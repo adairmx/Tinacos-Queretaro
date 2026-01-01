@@ -1,15 +1,16 @@
 import { Link } from "wouter";
-import { initialPosts } from "@/data/blog";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, User, ArrowRight, Plus } from "lucide-react";
+import { Calendar, User, ArrowRight } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
+import type { BlogPost } from "@shared/schema";
 
 export default function Blog() {
-  // In a real app, this would come from a backend/database
-  // For now we use the static data + any local storage data could be merged here
-  const posts = initialPosts;
+  const { data: posts = [], isLoading } = useQuery<BlogPost[]>({
+    queryKey: ["/api/blog"],
+  });
 
   return (
     <div className="min-h-screen bg-background font-sans">
@@ -27,8 +28,17 @@ export default function Blog() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Cargando artículos...</p>
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No hay artículos disponibles.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {posts.map((post) => (
               <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow border-border/50 group flex flex-col h-full">
                 <div className="relative h-48 overflow-hidden">
                   <img 
@@ -71,8 +81,9 @@ export default function Blog() {
                   </Button>
                 </CardFooter>
               </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
