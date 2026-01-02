@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,8 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/com
 import type { InsertBlogPost } from "@shared/schema";
 
 export default function AdminBlog() {
-  const [location, setLocation] = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [isAuth, setIsAuth] = useState(false);
   const [password, setPassword] = useState("");
@@ -51,7 +52,7 @@ export default function AdminBlog() {
         title: "Artículo Publicado",
         description: "Tu artículo ha sido guardado exitosamente.",
       });
-      setLocation("/blog");
+      navigate("/blog");
     },
     onError: () => {
       toast({
@@ -162,7 +163,7 @@ export default function AdminBlog() {
 
               <div className="pt-4 flex justify-end gap-4">
                 <Button type="button" variant="outline" asChild>
-                  <Link href="/blog">Cancelar</Link>
+                  <Link to="/blog">Cancelar</Link>
                 </Button>
                 <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={createPostMutation.isPending}>
                   {createPostMutation.isPending ? (
