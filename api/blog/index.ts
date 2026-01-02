@@ -1,38 +1,57 @@
-import { NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/serverless';
-import { blogs } from '../../drizzle/schema';
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { randomUUID } from "crypto";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
-// Create a serverless-compatible Postgres client and drizzle instance.
-// postgres-js is used without a connection pool for serverless environments.
-const sql = postgres(process.env.DATABASE_URL || '', { max: 1 });
-const db = drizzle(sql);
+const blogPosts = pgTable("blog_posts", {
+  id: varchar("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  excerpt: text("excerpt").notNull(),
+  content: text("content").notNull(),
+  author: text("author").notNull().default("MonsterCo"),
+  image: text("image").notNull(),
+  date: text("date").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
-export async function GET() {
-  try {
-    const items = await db.select().from(blogs).all();
-    return NextResponse.json(items);
-  } catch (error) {
-    console.error('Error fetching blogs', error);
-    return NextResponse.json({ error: 'Failed to fetch blogs' }, { status: 500 });
+const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
+  id: true,
+  createdAt: true,
+});
+
+function getDb() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL environment variable is required");
   }
+  const sqlClient = neon(process.env.DATABASE_URL);
+  return drizzle({ client: sqlClient });
 }
 
-export async function POST(request: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const body = await request.json();
-    const { title, content } = body;
+    const db = getDb();
+    
+    if (req.method === "GET") {
+      const posts = await db.select().from(blogPosts);
+      return res.status(200).json(posts);
+    }
 
-    // Generate an id up-front to satisfy Drizzle typings and ensure the id
-    // is available immediately after insert.
-    const id = randomUUID();
+    if (req.method === "POST") {
+      const validatedData = insertBlogPostSchema.parse(req.body);
+      const id = randomUUID();
+      const [post] = await db
+        .insert(blogPosts)
+        .values({ id, ...validatedData })
+        .returning();
+      return res.status(201).json(post);
+    }
 
-    await db.insert(blogs).values({ id, title, content });
-
-    return NextResponse.json({ id }, { status: 201 });
+    return res.status(405).json({ error: "Method not allowed" });
   } catch (error) {
-    console.error('Error creating blog', error);
-    return NextResponse.json({ error: 'Failed to create blog' }, { status: 500 });
+    console.error("Blog API error:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
