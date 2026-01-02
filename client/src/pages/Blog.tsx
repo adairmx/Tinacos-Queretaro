@@ -5,14 +5,14 @@ import { Calendar, User, ArrowRight } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import type { BlogPost } from "@shared/schema";
-import { useEffect } from "react";
 
 export default function Blog() {
-  const { data: posts = [], isLoading } = useQuery<BlogPost[]>({
+  const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
+    refetchOnMount: "always",
   });
 
-  if (isLoading) {
+  if (isFetching && posts.length === 0) {
     return (
       <div className="min-h-screen bg-background font-sans">
         <Navbar />
