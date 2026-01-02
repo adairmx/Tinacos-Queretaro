@@ -1,6 +1,5 @@
-import { useEffect } from "react";
 import { Link } from "wouter";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, User, ArrowRight } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
@@ -8,13 +7,6 @@ import Footer from "@/components/sections/Footer";
 import type { BlogPost } from "@shared/schema";
 
 export default function Blog() {
-  const queryClient = useQueryClient();
-  
-  // Ensure fresh data on mount (especially when navigating back)
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["/api/blog"] });
-  }, [queryClient]);
-  
   const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
     refetchOnMount: "always",
