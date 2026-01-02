@@ -8,15 +8,15 @@ import type { BlogPost } from "@shared/schema";
 import { useEffect } from "react";
 
 export default function Blog() {
-  const { data: posts = [], isLoading } = useQuery<BlogPost[]>({
+  const { data: posts = [], isLoading, refetch } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
   });
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    refetch();
+  }, [refetch]);
 
-  if (isLoading) {
+  if (isLoading && posts.length === 0) {
     return (
       <div className="min-h-screen bg-background font-sans">
         <Navbar />

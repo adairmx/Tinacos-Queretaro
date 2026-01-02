@@ -12,10 +12,6 @@ import type { BlogPost as BlogPostType } from "@shared/schema";
 export default function BlogPost() {
   const [match, params] = useRoute("/blog/:slug");
   
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   if (!match) return <NotFound />;
 
   const { data: post, isLoading } = useQuery<BlogPostType>({
