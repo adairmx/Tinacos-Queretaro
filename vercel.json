@@ -1,10 +1,15 @@
 {
-  "buildCommand": "vite build",
-  "outputDirectory": "dist/public",
-  "framework": "vite",
   "rewrites": [
     {
-      "source": "/(?!api|assets|_vercel|favicon.ico).*",
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
