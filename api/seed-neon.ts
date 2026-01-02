@@ -1,5 +1,5 @@
-import { db } from "./db";
-import { blogPosts } from "../../shared/schema";
+import { db } from "./lib/db.js";
+import { blogPosts } from "../shared/schema.js";
 
 const initialPosts = [
   {
