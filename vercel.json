@@ -2,13 +2,11 @@
   "buildCommand": "npx vite build",
   "outputDirectory": "dist/public",
   "framework": "vite",
+{
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 10
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
-  }
+  ]
 }
