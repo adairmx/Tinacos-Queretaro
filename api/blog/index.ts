@@ -1,53 +1,45 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
-import { desc } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
+import { randomUUID } from 'crypto';
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { blog } from '@/db/schema';
+import type { InferModel } from 'drizzle-orm';
 
-const blogPosts = pgTable("blog_posts", {
-  id: varchar("id").primaryKey(),
-  title: text("title").notNull(),
-  slug: text("slug").notNull().unique(),
-  excerpt: text("excerpt").notNull(),
-  content: text("content").notNull(),
-  author: text("author").notNull().default("MonsterCo"),
-  image: text("image").notNull(),
-  date: text("date").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
-  id: true,
-  createdAt: true,
-});
-
-function getDb() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL environment variable is required");
-  }
-  const sqlClient = neon(process.env.DATABASE_URL);
-  return drizzle({ client: sqlClient });
-}
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+// POST /api/blog
+export async function POST(req: Request) {
   try {
-    const db = getDb();
-    
-    if (req.method === "GET") {
-      const posts = await db.select().from(blogPosts).orderBy(desc(blogPosts.createdAt));
-      return res.status(200).json(posts);
+    const body = await req.json();
+
+    // Minimal validation - adapt to your project's validation schema (zod, yup, etc.)
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    if (req.method === "POST") {
-      const validatedData = insertBlogPostSchema.parse(req.body);
-      const [post] = await db.insert(blogPosts).values(validatedData).returning();
-      return res.status(201).json(post);
+    if (!body.title || !body.content) {
+      return NextResponse.json({ error: 'Missing required fields: title and content' }, { status: 400 });
     }
 
-    return res.status(405).json({ error: "Method not allowed" });
-  } catch (error) {
-    console.error("Blog API error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    const validatedData = {
+      title: String(body.title),
+      content: String(body.content),
+      // include other fields you expect on insert, with defaults if needed
+      published: Boolean(body.published ?? false),
+      // example timestamp field — adjust name/format to match your schema
+      created_at: body.created_at ? new Date(body.created_at) : new Date(),
+    } as const;
+
+    // Generate id before insert to satisfy drizzle's insert typings
+    const id = randomUUID();
+
+    // Use drizzle's InferModel to get the correct insert type for the blog table
+    type NewBlog = InferModel<typeof blog, 'insert'>;
+
+    const dataToInsert = { id, ...validatedData } as unknown as NewBlog;
+
+    await db.insert(blog).values(dataToInsert);
+
+    return NextResponse.json({ ok: true, id }, { status: 201 });
+  } catch (err) {
+    console.error('Error inserting blog:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
