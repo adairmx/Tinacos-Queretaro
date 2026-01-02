@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRoute, useLocation } from "wouter";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, Share2 } from "lucide-react";
@@ -10,18 +10,17 @@ import ReactMarkdown from "react-markdown";
 import type { BlogPost as BlogPostType } from "@shared/schema";
 
 export default function BlogPost() {
-  const [match, params] = useRoute("/blog/:slug");
-  const [, setLocation] = useLocation();
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Si por alguna razón params.slug llega a ser "blog" (caso de mismatch al volver),
+  // Si por alguna razón slug llega a ser "blog" (caso de mismatch al volver),
   // redirigimos a /blog para evitar la pantalla en blanco.
   useEffect(() => {
-    if (match && params?.slug === "blog") {
-      // Hacemos una navegación a /blog; mientras tanto no renderizamos el artículo.
-      setLocation("/blog");
+    if (slug === "blog") {
+      navigate("/blog", { replace: true });
     }
-  }, [match, params, setLocation]);
+  }, [slug, navigate]);
 
   // Invalidar la lista de posts cuando se desmonta este componente (al volver al listado)
   useEffect(() => {
@@ -31,12 +30,12 @@ export default function BlogPost() {
   }, [queryClient]);
 
   // Si estamos en el proceso de redirección por el caso 'blog', devolvemos null para evitar flash
-  if (match && params?.slug === "blog") return null;
-  if (!match || !params?.slug) return <NotFound />;
+  if (slug === "blog") return null;
+  if (!slug) return <NotFound />;
 
   const { data: post, isLoading } = useQuery<BlogPostType>({
-    queryKey: [`/api/blog/${params.slug}`],
-    enabled: !!params.slug && params.slug !== "blog",
+    queryKey: [`/api/blog/${slug}`],
+    enabled: !!slug && slug !== "blog",
   });
 
   if (isLoading) {

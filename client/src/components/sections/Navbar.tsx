@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -7,7 +7,8 @@ import logo from "@assets/Logo-Monster-sin-fondo_1766172236864.webp";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [location, setLocation] = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const links = [
     { name: "Inicio", href: "/#home" },
@@ -24,7 +25,7 @@ export default function Navbar() {
 
     if (href.startsWith("/#")) {
       const targetId = href.replace("/#", "#");
-      if (location === "/") {
+      if (location.pathname === "/") {
         // Already on home page, just scroll
         const element = document.querySelector(targetId);
         if (element) {
@@ -32,7 +33,7 @@ export default function Navbar() {
         }
       } else {
         // Navigate to home page then scroll
-        setLocation("/");
+        navigate("/");
         // Give time for navigation to happen before scrolling
         setTimeout(() => {
           const element = document.querySelector(targetId);
@@ -43,14 +44,14 @@ export default function Navbar() {
       }
     } else {
       // Regular navigation (e.g. /blog)
-      setLocation(href);
+      navigate(href);
     }
   };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+        <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
             <img src={logo} alt="MonsterCo" className="h-10 w-auto object-contain" />
             <div className="flex flex-col">
                 <span className="font-brand font-black text-4xl text-black leading-none tracking-wide" style={{ WebkitTextStroke: "1px hsl(var(--primary))" }}>
