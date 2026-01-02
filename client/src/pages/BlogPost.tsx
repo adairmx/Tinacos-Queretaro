@@ -11,20 +11,13 @@ import type { BlogPost as BlogPostType } from "@shared/schema";
 
 export default function BlogPost() {
   const [match, params] = useRoute("/blog/:slug");
-  const queryClient = useQueryClient();
-  
-  useEffect(() => {
-    return () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/blog"] });
-    };
-  }, [queryClient]);
   
   if (!match) return <NotFound />;
 
   const { data: post, isLoading } = useQuery<BlogPostType>({
     queryKey: [`/api/blog/${params.slug}`],
     staleTime: 0,
-    refetchOnMount: "always",
+    refetchOnMount: true,
   });
 
   if (isLoading) {

@@ -8,17 +8,14 @@ import Footer from "@/components/sections/Footer";
 import type { BlogPost } from "@shared/schema";
 
 export default function Blog() {
-  const { data: posts = [], isLoading, isFetching, refetch } = useQuery<BlogPost[]>({
+  const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
     staleTime: 0,
-    refetchOnMount: "always",
   });
 
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  if ((isLoading || isFetching) && posts.length === 0) {
+  if (isLoading && posts.length === 0) {
     return (
       <div className="min-h-screen bg-background font-sans">
         <Navbar />
