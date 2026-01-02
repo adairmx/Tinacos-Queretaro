@@ -10,9 +10,9 @@ import type { BlogPost } from "@shared/schema";
 export default function Blog() {
   const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
-    staleTime: 0,
+    staleTime: 1000 * 30, // 30 seconds
   });
 
   if (isLoading && posts.length === 0) {

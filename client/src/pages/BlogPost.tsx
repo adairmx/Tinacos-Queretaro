@@ -16,7 +16,7 @@ export default function BlogPost() {
 
   const { data: post, isLoading } = useQuery<BlogPostType>({
     queryKey: [`/api/blog/${params.slug}`],
-    staleTime: 0,
+    staleTime: 1000 * 60, // 1 minute
     refetchOnMount: true,
   });
 
