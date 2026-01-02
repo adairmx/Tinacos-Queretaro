@@ -7,9 +7,24 @@ import Footer from "@/components/sections/Footer";
 import type { BlogPost } from "@shared/schema";
 
 export default function Blog() {
-  const { data: posts = [], isLoading } = useQuery<BlogPost[]>({
+  const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
+    refetchOnMount: "always",
   });
+
+  if (isFetching && posts.length === 0) {
+    return (
+      <div className="min-h-screen bg-background font-sans">
+        <Navbar />
+        <main className="py-20">
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-muted-foreground">Cargando artículos...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background font-sans">
