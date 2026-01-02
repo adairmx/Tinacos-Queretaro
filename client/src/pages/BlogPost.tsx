@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { useRoute } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, Share2 } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
@@ -10,6 +11,13 @@ import type { BlogPost as BlogPostType } from "@shared/schema";
 
 export default function BlogPost() {
   const [match, params] = useRoute("/blog/:slug");
+  const queryClient = useQueryClient();
+  
+  useEffect(() => {
+    return () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/blog"] });
+    };
+  }, [queryClient]);
   
   if (!match) return <NotFound />;
 
