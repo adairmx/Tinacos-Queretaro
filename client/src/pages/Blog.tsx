@@ -8,15 +8,18 @@ import type { BlogPost } from "@shared/schema";
 import { useEffect } from "react";
 
 export default function Blog() {
-  const { data: posts = [], isLoading, refetch } = useQuery<BlogPost[]>({
+  const { data: posts = [], isLoading, isFetching, refetch } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
   });
 
   useEffect(() => {
     refetch();
-  }, [refetch]);
+  }, []);
 
-  if (isLoading && posts.length === 0) {
+  if ((isLoading || isFetching) && posts.length === 0) {
     return (
       <div className="min-h-screen bg-background font-sans">
         <Navbar />
