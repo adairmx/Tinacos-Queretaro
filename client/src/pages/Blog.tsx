@@ -1,7 +1,6 @@
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Calendar, User, ArrowRight } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
@@ -72,13 +71,11 @@ export default function Blog() {
                 </CardContent>
                 
                 <CardFooter className="pt-0">
-                  <Button variant="link" className="px-0 text-accent font-bold group-hover:translate-x-1 transition-transform p-0" asChild>
-                    <Link href={`/blog/${post.slug}`}>
-                      <a className="flex items-center">
-                        Leer más <ArrowRight className="ml-1 w-4 h-4" />
-                      </a>
-                    </Link>
-                  </Button>
+                  <Link href={`/blog/${post.slug}`}>
+                    <span className="flex items-center text-accent font-bold group-hover:translate-x-1 transition-transform cursor-pointer">
+                      Leer más <ArrowRight className="ml-1 w-4 h-4" />
+                    </span>
+                  </Link>
                 </CardFooter>
               </Card>
               ))}
