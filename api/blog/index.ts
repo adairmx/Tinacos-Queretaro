@@ -1,45 +1,38 @@
-import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { blog } from '@/db/schema';
-import type { InferModel } from 'drizzle-orm';
+import { randomUUID } from 'crypto';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/serverless';
+import { blogs } from '../../drizzle/schema';
 
-// POST /api/blog
-export async function POST(req: Request) {
+// Create a serverless-compatible Postgres client and drizzle instance.
+// postgres-js is used without a connection pool for serverless environments.
+const sql = postgres(process.env.DATABASE_URL || '', { max: 1 });
+const db = drizzle(sql);
+
+export async function GET() {
   try {
-    const body = await req.json();
+    const items = await db.select().from(blogs).all();
+    return NextResponse.json(items);
+  } catch (error) {
+    console.error('Error fetching blogs', error);
+    return NextResponse.json({ error: 'Failed to fetch blogs' }, { status: 500 });
+  }
+}
 
-    // Minimal validation - adapt to your project's validation schema (zod, yup, etc.)
-    if (!body || typeof body !== 'object') {
-      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
-    }
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { title, content } = body;
 
-    if (!body.title || !body.content) {
-      return NextResponse.json({ error: 'Missing required fields: title and content' }, { status: 400 });
-    }
-
-    const validatedData = {
-      title: String(body.title),
-      content: String(body.content),
-      // include other fields you expect on insert, with defaults if needed
-      published: Boolean(body.published ?? false),
-      // example timestamp field — adjust name/format to match your schema
-      created_at: body.created_at ? new Date(body.created_at) : new Date(),
-    } as const;
-
-    // Generate id before insert to satisfy drizzle's insert typings
+    // Generate an id up-front to satisfy Drizzle typings and ensure the id
+    // is available immediately after insert.
     const id = randomUUID();
 
-    // Use drizzle's InferModel to get the correct insert type for the blog table
-    type NewBlog = InferModel<typeof blog, 'insert'>;
+    await db.insert(blogs).values({ id, title, content });
 
-    const dataToInsert = { id, ...validatedData } as unknown as NewBlog;
-
-    await db.insert(blog).values(dataToInsert);
-
-    return NextResponse.json({ ok: true, id }, { status: 201 });
-  } catch (err) {
-    console.error('Error inserting blog:', err);
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json({ id }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating blog', error);
+    return NextResponse.json({ error: 'Failed to create blog' }, { status: 500 });
   }
 }
