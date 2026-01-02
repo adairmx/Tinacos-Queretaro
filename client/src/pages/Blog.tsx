@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -6,16 +5,18 @@ import { Calendar, User, ArrowRight } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import type { BlogPost } from "@shared/schema";
+import { useEffect } from "react";
 
 export default function Blog() {
-  const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
+  const { data: posts = [], isLoading } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
-    refetchOnWindowFocus: false,
-    refetchOnMount: true,
-    staleTime: 1000 * 30, // 30 seconds
   });
 
-  if (isLoading && posts.length === 0) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background font-sans">
         <Navbar />
