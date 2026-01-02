@@ -1,0 +1,6 @@
+server/
+migrations/
+*.log
+.replit
+replit.nix
+replit.md
