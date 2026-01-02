@@ -12,6 +12,11 @@ import type { BlogPost as BlogPostType } from "@shared/schema";
 export default function BlogPost() {
   const [match, params] = useRoute("/blog/:slug");
   const queryClient = useQueryClient();
+
+  // Workaround for Wouter back button mismatch issue
+  if (match && params.slug === "blog") {
+    return null;
+  }
   
   useEffect(() => {
     return () => {
@@ -19,10 +24,11 @@ export default function BlogPost() {
     };
   }, [queryClient]);
   
-  if (!match) return <NotFound />;
+  if (!match || !params.slug) return <NotFound />;
 
   const { data: post, isLoading } = useQuery<BlogPostType>({
     queryKey: [`/api/blog/${params.slug}`],
+    enabled: !!params.slug && params.slug !== "blog",
   });
 
   if (isLoading) {

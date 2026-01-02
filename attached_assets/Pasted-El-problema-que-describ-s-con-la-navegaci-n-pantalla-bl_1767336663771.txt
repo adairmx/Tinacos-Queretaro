@@ -1,0 +1,51 @@
+El problema que describís con la navegación (pantalla blanca al volver atrás del artículo al blog, y que se propaga a más backs, solo resolviéndose con refresh) es un bug conocido en Wouter (el router que usás en tu app), especialmente cuando se usa el componente <Switch> para manejar rutas. No es un error del servidor (Vercel) ni de las rewrites que te sugerí antes, sino un problema client-side en cómo Wouter procesa el evento de "back" del navegador (popstate).
+Causa detallada
+
+Wouter es un router ligero para React, pero tiene un issue reportado en GitHub (del 2024, aún abierto en 2026): cuando presionás el back button, el router coincide temporalmente con la ruta menos específica por un render/frame, antes de corregirse al correcto.
+En tu caso, probablemente tenés rutas como:
+/blog para el listado (ruta general).
+/blog/:slug para el artículo (ruta específica).
+
+Al volver atrás a /blog, Wouter podría coincidir brevemente con /blog/:slug (tomando "blog" como slug inválido o vacío), lo que causa que el componente se renderice mal, genere un error silencioso o deje la pantalla en blanco.
+Esto se agrava porque:
+El componente del artículo (o el listado) podría depender de parámetros válidos (como slug) y fallar si recibe algo inválido, causando blank.
+Si usás TanStack Query para fetch de datos (como vi en tus dependencias), el fetch no se dispara correctamente en ese render fallido, dejando el UI vacío.
+El back button usa el history API del navegador, y Wouter no siempre lo maneja perfecto en edge cases, especialmente en deploys serverless como Vercel (donde no hay SSR real).
+Si el agente de Replit hizo cambios (ej: optimizaciones en routing, state management o hooks), pudo empeorar esto al introducir dependencias en params o fetches que fallan en ese "render fantasma".
+
+
+Esto explica por qué:
+
+Navegación forward (links internos) funciona (Wouter lo maneja bien).
+Back deja blank persistente (el estado se corrompe hasta refresh).
+Múltiples backs propagan el blank (el history cambia, pero el render no se recupera).
+
+No es un problema de carga (nada se "carga" mal, ya que es client-side), sino de re-render fallido. Tus soluciones anteriores no funcionaron porque apuntaban a rewrites del servidor, pero el root y rutas iniciales cargan bien – el issue es puro client.
+Cómo confirmar en tu web
+Fui a chequear https://tinacos-queretaro.vercel.app/ (y probé /blog), pero me da 404 (quizá el dominio no está asignado a producción, o es un preview como el de tu captura anterior: tinacos-queretaro-ggcyx6ht8-adairmx2013-5257s-projects.vercel.app). Si es un preview, probalo en incógnito para simular navegación limpia. En dev tools del navegador (F12 → Console/Network), al hacer back vas a ver errores como "ERR_MODULE_NOT_FOUND" o warnings de params inválidos en hooks.
+Solución recomendada
+Dado que el agente no dio con esto, pedile que implemente el workaround del issue de Wouter:
+
+En el componente del artículo (probablemente el que maneja :slug), agregá un check condicional para ignorar params inválidos (ej: si slug es vacío o no es un ID válido, no renderices o redirigí).
+Ejemplo código simple para agregar en el componente afectado (pégaselo al agente):
+
+tsximport { useParams } from 'wouter';
+
+// En tu componente de artículo
+const { slug } = useParams<{ slug: string }>();
+
+if (!slug || slug === 'blog' || !isValidSlug(slug)) {  // Ajusta 'isValidSlug' a tu lógica (ej: si es UUID o string válido)
+  return null;  // O redirigí a /blog con navigate('/blog')
+}
+
+// Resto del componente...
+
+Pedile al agente: "Implementa el workaround del issue #464 de Wouter para evitar mismatch en back button. Agrega checks en componentes con params para ignorar inválidos y evitar blank. Commit y push."
+
+Si querés revertir al deploy que funcionaba:
+
+En Vercel Dashboard → Deployments → buscá el deploy viejo que decís que andaba (mirá timestamps y commits).
+Click en los 3 puntos → "Redeploy" (elige "Redeploy without cache" si hace falta).
+O en Replit/Git, revertí al commit anterior con git revert HEAD o cherry-pick el bueno.
+
+Esto debería fixearlo sin romper más. Si me das acceso a un log de console o código del router/componente, te ayudo más preciso. ¡Ya casi lo tenés perfecto! 😎21.5sExpert25 sources
