@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -7,12 +8,17 @@ import Footer from "@/components/sections/Footer";
 import type { BlogPost } from "@shared/schema";
 
 export default function Blog() {
-  const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
+  const { data: posts = [], isLoading, isFetching, refetch } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
+    staleTime: 0,
     refetchOnMount: "always",
   });
 
-  if (isFetching && posts.length === 0) {
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  if ((isLoading || isFetching) && posts.length === 0) {
     return (
       <div className="min-h-screen bg-background font-sans">
         <Navbar />
