@@ -27,7 +27,7 @@ function getDb() {
     throw new Error("DATABASE_URL environment variable is required");
   }
   const sqlClient = neon(process.env.DATABASE_URL);
-  return drizzle(sqlClient);
+  return drizzle({ client: sqlClient });
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
