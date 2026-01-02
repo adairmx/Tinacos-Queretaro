@@ -53,46 +53,48 @@ export default function Blog() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {posts.map((post) => (
-              <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow border-border/50 group flex flex-col h-full">
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={post.image} 
-                    alt={post.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                </div>
-                
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {post.date}
+                <Link key={post.id} href={`/blog/${post.slug}`}>
+                  <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border/50 group flex flex-col h-full cursor-pointer hover:border-primary/30">
+                    <div className="relative h-48 overflow-hidden">
+                      <img 
+                        src={post.image} 
+                        alt={post.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
                     </div>
-                    <div className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      {post.author}
-                    </div>
-                  </div>
-                  <h3 className="font-heading font-bold text-xl text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                    {post.title}
-                  </h3>
-                </CardHeader>
-                
-                <CardContent className="flex-grow">
-                  <p className="text-muted-foreground text-sm line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                </CardContent>
-                
-                <CardFooter className="pt-0">
-                  <Link href={`/blog/${post.slug}`}>
-                    <span className="flex items-center text-accent font-bold group-hover:translate-x-1 transition-transform cursor-pointer">
-                      Leer más <ArrowRight className="ml-1 w-4 h-4" />
-                    </span>
-                  </Link>
-                </CardFooter>
-              </Card>
+                    
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {post.date}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1">
+                            <User className="w-3 h-3" />
+                            {post.author}
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="font-heading font-bold text-xl text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h3>
+                    </CardHeader>
+                    
+                    <CardContent className="flex-grow">
+                      <p className="text-muted-foreground text-sm line-clamp-3">
+                        {post.excerpt}
+                      </p>
+                    </CardContent>
+                    
+                    <CardFooter className="pt-0">
+                      <span className="flex items-center text-accent font-bold group-hover:translate-x-1 transition-transform">
+                        Leer más <ArrowRight className="ml-1 w-4 h-4" />
+                      </span>
+                    </CardFooter>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}
