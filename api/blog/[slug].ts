@@ -1,8 +1,26 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
+import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
-import { blogPosts, insertBlogPostSchema } from "../../shared/schema.js";
+import { createInsertSchema } from "drizzle-zod";
+
+const blogPosts = pgTable("blog_posts", {
+  id: varchar("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  excerpt: text("excerpt").notNull(),
+  content: text("content").notNull(),
+  author: text("author").notNull().default("MonsterCo"),
+  image: text("image").notNull(),
+  date: text("date").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
+  id: true,
+  createdAt: true,
+});
 
 function getDb() {
   if (!process.env.DATABASE_URL) {
