@@ -1,20 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import heroBg from "@assets/generated_images/clean_blue_water_surface_background.png";
+import heroBg from "@assets/generated_images/clean_blue_water_surface_background.webp";
+import heroBgFallback from "@assets/generated_images/clean_blue_water_surface_background.png";
 
 export default function Hero() {
   return (
     <section id="home" className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={heroBg} 
-          alt="Agua limpia y cristalina - Lavado de tinacos en Querétaro" 
-          className="w-full h-full object-cover"
-          width="1920"
-          height="1080"
-          fetchpriority="high"
-        />
+        <picture>
+          <source srcSet={heroBg} type="image/webp" />
+          <img 
+            src={heroBgFallback} 
+            alt="Agua limpia y cristalina - Lavado de tinacos en Querétaro" 
+            className="w-full h-full object-cover"
+            width="1920"
+            height="1080"
+            fetchpriority="high"
+          />
+        </picture>
         <div className="absolute inset-0 bg-primary/40 mix-blend-multiply" />
         <div className="absolute inset-0 bg-black/20" />
       </div>
