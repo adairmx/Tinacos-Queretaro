@@ -1,38 +1,56 @@
-import { NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
-import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/serverless';
-import { blogs } from '../../drizzle/schema';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { db } from '../lib/db.js';
+import { blogPosts } from '../../shared/schema.js';
 
-// Create a serverless-compatible Postgres client and drizzle instance.
-// postgres-js is used without a connection pool for serverless environments.
-const sql = postgres(process.env.DATABASE_URL || '', { max: 1 });
-const db = drizzle(sql);
+export default async function handler(
+  request: VercelRequest,
+  response: VercelResponse,
+) {
+  // Handle CORS
+  response.setHeader('Access-Control-Allow-Credentials', 'true');
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  response.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-export async function GET() {
-  try {
-    const items = await db.select().from(blogs).all();
-    return NextResponse.json(items);
-  } catch (error) {
-    console.error('Error fetching blogs', error);
-    return NextResponse.json({ error: 'Failed to fetch blogs' }, { status: 500 });
+  if (request.method === 'OPTIONS') {
+    response.status(200).end();
+    return;
   }
-}
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { title, content } = body;
-
-    // Generate an id up-front to satisfy Drizzle typings and ensure the id
-    // is available immediately after insert.
-    const id = randomUUID();
-
-    await db.insert(blogs).values({ id, title, content });
-
-    return NextResponse.json({ id }, { status: 201 });
-  } catch (error) {
-    console.error('Error creating blog', error);
-    return NextResponse.json({ error: 'Failed to create blog' }, { status: 500 });
+  if (request.method === 'GET') {
+    try {
+      const items = await db.select().from(blogPosts);
+      return response.status(200).json(items);
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+      return response.status(500).json({ error: 'Failed to fetch blog posts' });
+    }
   }
+
+  if (request.method === 'POST') {
+    try {
+      const body = request.body;
+      const { title, slug, excerpt, content, author, image, date } = body;
+
+      const [newPost] = await db.insert(blogPosts).values({
+        title,
+        slug,
+        excerpt,
+        content,
+        author,
+        image,
+        date,
+      }).returning();
+
+      return response.status(201).json(newPost);
+    } catch (error) {
+      console.error('Error creating blog post:', error);
+      return response.status(500).json({ error: 'Failed to create blog post' });
+    }
+  }
+
+  return response.status(405).json({ error: 'Method not allowed' });
 }

@@ -1,34 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
-
-const blogPosts = pgTable("blog_posts", {
-  id: varchar("id").primaryKey(),
-  title: text("title").notNull(),
-  slug: text("slug").notNull().unique(),
-  excerpt: text("excerpt").notNull(),
-  content: text("content").notNull(),
-  author: text("author").notNull().default("MonsterCo"),
-  image: text("image").notNull(),
-  date: text("date").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
-  id: true,
-  createdAt: true,
-});
-
-function getDb() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL environment variable is required");
-  }
-  const sqlClient = neon(process.env.DATABASE_URL);
-  return drizzle({ client: sqlClient });
-}
+import { db } from "../lib/db.js";
+import { blogPosts, insertBlogPostSchema } from "../../shared/schema.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { slug } = req.query;
@@ -38,8 +11,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const db = getDb();
-    
     if (req.method === "GET") {
       const [post] = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug));
       if (!post) {
