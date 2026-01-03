@@ -61,9 +61,12 @@ export default function FAQ() {
     document.head.appendChild(script);
 
     return () => {
-      document.head.removeChild(script);
+      // Safe cleanup - only remove if script still exists
+      if (script.parentNode) {
+        document.head.removeChild(script);
+      }
     };
-  }, []);
+  }, []); // Empty array is correct as faqs is static
 
   return (
     <section id="faq" className="py-20 bg-background">

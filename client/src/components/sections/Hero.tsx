@@ -16,7 +16,7 @@ export default function Hero() {
             className="w-full h-full object-cover"
             width="1920"
             height="1080"
-            fetchpriority="high"
+            fetchPriority="high"
           />
         </picture>
         <div className="absolute inset-0 bg-primary/40 mix-blend-multiply" />
