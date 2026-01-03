@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { desc } from 'drizzle-orm';
 import { db } from '../lib/db.js';
 import { blogPosts, insertBlogPostSchema } from '../../shared/schema.js';
 
@@ -22,11 +23,11 @@ export default async function handler(
 
   if (request.method === 'GET') {
     try {
-      // Add pagination support - default to first 100 posts, ordered by creation date
+      // Add pagination support - default to first 100 posts, ordered by creation date (newest first)
       const limit = Math.min(parseInt(request.query.limit as string) || 100, 100);
       const offset = parseInt(request.query.offset as string) || 0;
       
-      const items = await db.select().from(blogPosts).limit(limit).offset(offset);
+      const items = await db.select().from(blogPosts).orderBy(desc(blogPosts.createdAt)).limit(limit).offset(offset);
       return response.status(200).json(items);
     } catch (error) {
       console.error('Error fetching blog posts:', error);
@@ -36,8 +37,13 @@ export default async function handler(
 
   if (request.method === 'POST') {
     try {
-      // Vercel automatically parses JSON body, but handle both cases
-      const body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
+      // Vercel automatically parses JSON body, but handle both cases safely
+      let body;
+      try {
+        body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
+      } catch (parseError) {
+        return response.status(400).json({ error: 'Invalid JSON in request body' });
+      }
       
       // Validate input using schema
       const validatedData = insertBlogPostSchema.parse(body);
@@ -48,8 +54,11 @@ export default async function handler(
     } catch (error) {
       console.error('Error creating blog post:', error);
       if (error instanceof Error && 'issues' in error) {
-        // Zod validation error
-        return response.status(400).json({ error: 'Invalid input data', details: error });
+        // Zod validation error - return only the validation issues
+        return response.status(400).json({ 
+          error: 'Invalid input data', 
+          issues: (error as any).issues 
+        });
       }
       return response.status(500).json({ error: 'Failed to create blog post' });
     }
