@@ -51,15 +51,16 @@ export default function BlogPost() {
       <main className="py-20">
         <article className="container mx-auto px-4 max-w-3xl">
           <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate(-1)}
-              className="gap-2 text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Volver
-            </Button>
+            <Link to="/blog">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Volver al blog
+              </Button>
+            </Link>
           </div>
 
           <header className="mb-10 text-center">
