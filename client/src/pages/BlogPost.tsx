@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useRoute, useLocation } from "wouter";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Calendar, User, Share2 } from "lucide-react";
+import { Calendar, User, Share2, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import NotFound from "@/pages/not-found";
@@ -10,18 +10,9 @@ import ReactMarkdown from "react-markdown";
 import type { BlogPost as BlogPostType } from "@shared/schema";
 
 export default function BlogPost() {
-  const [match, params] = useRoute("/blog/:slug");
-  const [, setLocation] = useLocation();
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-
-  // Si por alguna razón params.slug llega a ser "blog" (caso de mismatch al volver),
-  // redirigimos a /blog para evitar la pantalla en blanco.
-  useEffect(() => {
-    if (match && params?.slug === "blog") {
-      // Hacemos una navegación a /blog; mientras tanto no renderizamos el artículo.
-      setLocation("/blog");
-    }
-  }, [match, params, setLocation]);
 
   // Invalidar la lista de posts cuando se desmonta este componente (al volver al listado)
   useEffect(() => {
@@ -30,13 +21,11 @@ export default function BlogPost() {
     };
   }, [queryClient]);
 
-  // Si estamos en el proceso de redirección por el caso 'blog', devolvemos null para evitar flash
-  if (match && params?.slug === "blog") return null;
-  if (!match || !params?.slug) return <NotFound />;
+  if (!slug) return <NotFound />;
 
   const { data: post, isLoading } = useQuery<BlogPostType>({
-    queryKey: [`/api/blog/${params.slug}`],
-    enabled: !!params.slug && params.slug !== "blog",
+    queryKey: [`/api/blog/${slug}`],
+    enabled: !!slug,
   });
 
   if (isLoading) {
@@ -61,6 +50,19 @@ export default function BlogPost() {
 
       <main className="py-20">
         <article className="container mx-auto px-4 max-w-3xl">
+          <div className="mb-6">
+            <Link to="/blog">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Volver al blog
+              </Button>
+            </Link>
+          </div>
+
           <header className="mb-10 text-center">
             <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-xl mb-10">
               <img src={post.image} alt={post.title} className="w-full h-full object-cover" />

@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, User, ArrowRight } from "lucide-react";
@@ -53,7 +53,7 @@ export default function Blog() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {posts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
+                <Link key={post.id} to={`/blog/${post.slug}`}>
                   <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border/50 group flex flex-col h-full cursor-pointer hover:border-primary/30">
                     <div className="relative h-48 overflow-hidden">
                       <img 
