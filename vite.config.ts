@@ -39,6 +39,18 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'ui-vendor': ['@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+        },
+      },
+    },
+    cssCodeSplit: true,
+    minify: 'esbuild',
+    target: 'es2015',
+    assetsInlineLimit: 4096,
   },
   server: {
     host: "0.0.0.0",
