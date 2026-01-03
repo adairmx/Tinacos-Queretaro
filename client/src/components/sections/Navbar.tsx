@@ -51,7 +51,14 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <img src={logo} alt="MonsterCo" className="h-10 w-auto object-contain" />
+            <img 
+              src={logo} 
+              alt="MonsterCo - Lavado de Tinacos en Querétaro" 
+              className="h-10 w-auto object-contain"
+              width="40"
+              height="40"
+              loading="eager"
+            />
             <div className="flex flex-col">
                 <span className="font-brand font-black text-4xl text-black leading-none tracking-wide" style={{ WebkitTextStroke: "1px hsl(var(--primary))" }}>
                     MonsterCo

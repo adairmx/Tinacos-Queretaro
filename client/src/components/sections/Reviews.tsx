@@ -49,8 +49,11 @@ export default function Reviews() {
           <div className="flex items-center justify-center gap-2 mb-4">
             <img 
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png" 
-              alt="Google"
+              alt="Google Logo"
               className="w-8 h-8"
+              width="32"
+              height="32"
+              loading="lazy"
             />
             <span className="text-2xl font-bold text-slate-700">Reseñas</span>
           </div>
@@ -94,8 +97,11 @@ export default function Reviews() {
                       </div>
                       <img 
                         src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png" 
-                        alt="Google"
+                        alt="Google Logo"
                         className="w-5 h-5 opacity-50"
+                        width="20"
+                        height="20"
+                        loading="lazy"
                       />
                     </div>
                     

@@ -9,8 +9,11 @@ export default function Hero() {
       <div className="absolute inset-0 z-0">
         <img 
           src={heroBg} 
-          alt="Agua limpia y cristalina" 
+          alt="Agua limpia y cristalina - Lavado de tinacos en Querétaro" 
           className="w-full h-full object-cover"
+          width="1920"
+          height="1080"
+          fetchpriority="high"
         />
         <div className="absolute inset-0 bg-primary/40 mix-blend-multiply" />
         <div className="absolute inset-0 bg-black/20" />
@@ -22,12 +25,12 @@ export default function Hero() {
           Servicio #1 en Querétaro
         </span>
         <h1 className="font-heading font-extrabold text-4xl md:text-6xl lg:text-7xl leading-tight mb-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 drop-shadow-lg">
-          Agua Limpia,<br />
-          <span className="text-secondary">Familia Sana</span>
+          Lavado de Tinacos<br />
+          <span className="text-secondary">y Cisternas en Querétaro</span>
         </h1>
         <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 drop-shadow-md">
-          Especialistas en lavado y desinfección de tinacos y cisternas. 
-          Servicio profesional, rápido y garantizado en todo Querétaro.
+          Servicio profesional de limpieza y desinfección de tinacos y cisternas. 
+          Rápido, garantizado y con los mejores precios en todo Querétaro.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
           <Button size="lg" className="bg-accent hover:bg-accent/90 text-white font-bold text-lg px-8 h-14 w-full sm:w-auto shadow-lg hover:scale-105 transition-transform" asChild>

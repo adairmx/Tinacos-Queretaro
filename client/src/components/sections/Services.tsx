@@ -5,18 +5,18 @@ import cisternaImg from "@assets/generated_images/clean_underground_cistern_inte
 export default function Services() {
   const services = [
     {
-      title: "Lavado de Tinacos",
-      description: "Eliminamos sedimentos, bacterias y algas de tu tinaco para asegurar la calidad del agua en tu hogar.",
-      features: ["Desinfección profunda", "Revisión de flotador", "Duración: 1-2 horas", "Personal capacitado"],
+      title: "Lavado de Tinacos en Querétaro",
+      description: "Servicio profesional de limpieza y desinfección de tinacos. Eliminamos sedimentos, bacterias, algas y garantizamos agua cristalina para tu familia.",
+      features: ["Desinfección profunda con productos certificados", "Revisión de flotador y válvulas", "Duración: 1-2 horas", "Personal capacitado y uniformado"],
       image: tinacoImg,
-      alt: "Lavado de tinaco residencial"
+      alt: "Lavado profesional de tinaco residencial en Querétaro"
     },
     {
-      title: "Lavado de Cisternas",
-      description: "Limpieza profesional de cisternas con equipo especializado para espacios confinados.",
-      features: ["Extracción de sedimentos", "Desinfección de paredes", "Revisión de bomba", "Personal capacitado", "Duración: 1-2 horas"],
+      title: "Lavado de Cisternas en Querétaro",
+      description: "Limpieza profesional de cisternas con equipo especializado para espacios confinados. Servicio completo con extracción de lodos y desinfección.",
+      features: ["Extracción de sedimentos y lodos", "Desinfección de paredes y fondo", "Revisión de bomba y sistema", "Personal certificado", "Duración: 2-3 horas"],
       image: cisternaImg,
-      alt: "Lavado de cisterna subterránea"
+      alt: "Servicio de limpieza de cisterna subterránea en Querétaro"
     }
   ];
 
@@ -43,6 +43,9 @@ export default function Services() {
                   src={service.image} 
                   alt={service.alt} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  width="800"
+                  height="600"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <h3 className="absolute bottom-4 left-6 text-2xl font-bold text-white font-heading">

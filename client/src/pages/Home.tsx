@@ -3,6 +3,7 @@ import Hero from "@/components/sections/Hero";
 import Services from "@/components/sections/Services";
 import ServiceZones from "@/components/sections/ServiceZones";
 import Pricing from "@/components/sections/Pricing";
+import FAQ from "@/components/sections/FAQ";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import WhatsAppButton from "@/components/sections/WhatsAppButton";
@@ -19,6 +20,7 @@ export default function Home() {
         <Services />
         <ServiceZones />
         <Pricing />
+        <FAQ />
         <Contact />
       </main>
       <Footer />
