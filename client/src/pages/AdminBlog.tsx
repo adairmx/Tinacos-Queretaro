@@ -76,13 +76,19 @@ export default function AdminBlog() {
       .replace(/-+/g, "-")
       .trim();
 
+    const content = formData.get("content") as string;
+    const wordCount = content.trim().split(/\s+/).length;
+    const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
     const postData: InsertBlogPost = {
       title,
       slug,
       excerpt: formData.get("excerpt") as string,
-      content: formData.get("content") as string,
+      content,
       image: formData.get("image") as string || "/placeholder-blog.jpg",
       author: "MonsterCo",
+      category: formData.get("category") as string || "General",
+      readingTime,
       date: new Date().toLocaleDateString("es-MX", { 
         day: "2-digit", 
         month: "short", 
@@ -148,6 +154,24 @@ export default function AdminBlog() {
                 <Label htmlFor="image">URL de la Imagen Principal</Label>
                 <Input id="image" name="image" placeholder="https://..." />
                 <p className="text-xs text-muted-foreground">Pega aquí el enlace a tu imagen.</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category">Categoría</Label>
+                <select
+                  id="category"
+                  name="category"
+                  defaultValue="General"
+                  className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="General">General</option>
+                  <option value="Mantenimiento">Mantenimiento</option>
+                  <option value="Ahorro de Agua">Ahorro de Agua</option>
+                  <option value="Salud">Salud</option>
+                  <option value="Consejos">Consejos</option>
+                  <option value="Instalaciones">Instalaciones</option>
+                </select>
+                <p className="text-xs text-muted-foreground">El tiempo de lectura se calcula automáticamente.</p>
               </div>
 
               <div className="space-y-2">

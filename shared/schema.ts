@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -26,6 +26,8 @@ export const blogPosts = pgTable("blog_posts", {
   author: text("author").notNull().default("MonsterCo"),
   image: text("image").notNull(),
   date: text("date").notNull(),
+  category: text("category").notNull().default("General"),
+  readingTime: integer("reading_time").notNull().default(5),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
