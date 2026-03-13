@@ -66,12 +66,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateBlogPost(id: string, updateData: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
-    const [post] = await db
-      .update(blogPosts)
-      .set(updateData)
-      .where(eq(blogPosts.id, id))
-      .returning();
-    return post || undefined;
+    const trimmedId = id.trim();
+    console.log(`Attempting to update post with ID: "${trimmedId}"`);
+    try {
+      const [post] = await db
+        .update(blogPosts)
+        .set(updateData)
+        .where(eq(blogPosts.id, trimmedId))
+        .returning();
+      
+      if (!post) {
+        console.warn(`No post found for update with ID: "${trimmedId}"`);
+        // Diagnostic: check if post exists at all
+        const [exists] = await db.select({ id: blogPosts.id }).from(blogPosts).where(eq(blogPosts.id, trimmedId));
+        if (!exists) {
+          console.error(`CRITICAL: Post with ID "${trimmedId}" actually does not exist in the database.`);
+          // List a few existing IDs for comparison
+          const allIds = await db.select({ id: blogPosts.id }).from(blogPosts).limit(5);
+          console.log("Current existing IDs (first 5):", allIds.map(a => a.id));
+        } else {
+          console.log(`DIAGNOSTIC: Post "${trimmedId}" exists, but update returning() was empty. This is unexpected.`);
+        }
+      } else {
+        console.log(`Successfully updated post: ${post.title} (${post.id})`);
+      }
+      
+      return post || undefined;
+    } catch (error) {
+      console.error("Database error during updateBlogPost:", error);
+      throw error;
+    }
   }
 
   async deleteBlogPost(id: string): Promise<void> {
