@@ -1,10 +1,21 @@
+import { useQuery } from "@tanstack/react-query";
+import type { SiteSettings } from "@shared/schema";
+
 export default function Footer() {
+  const { data: settings } = useQuery<SiteSettings>({
+    queryKey: ["/api/settings"],
+  });
+
+  const siteTitle = settings?.title || "MonsterCo";
+
   return (
     <footer className="bg-slate-900 text-white py-12">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="font-brand font-black text-3xl mb-4 tracking-wide text-black" style={{ WebkitTextStroke: "1.5px hsl(var(--primary))" }}>MonsterCo</h3>
+            <h3 className="font-brand font-black text-3xl mb-4 tracking-wide text-black" style={{ WebkitTextStroke: "1.5px hsl(var(--primary))" }}>
+              {siteTitle}
+            </h3>
             <p className="text-slate-400 text-sm max-w-xs">
               Servicio profesional de limpieza y desinfección de sistemas de almacenamiento de agua en Querétaro.
             </p>
@@ -30,7 +41,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-slate-800 pt-8 text-center text-xs text-slate-500">
-          <p>&copy; {new Date().getFullYear()} MonsterCo. Todos los derechos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} {siteTitle}. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

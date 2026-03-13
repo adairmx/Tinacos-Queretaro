@@ -3,16 +3,24 @@ import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import { BlogCard } from "@/components/blog/BlogCard";
-import { BlogSearch } from "@/components/blog/BlogSearch";
-import { FeaturedPost } from "@/components/blog/FeaturedPost";
+import BlogSearch from "@/components/blog/BlogSearch";
+import FeaturedPost from "@/components/blog/FeaturedPost";
+import Newsletter from "@/components/blog/Newsletter";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { BlogPost } from "@shared/schema";
+import type { BlogPost, SiteSettings } from "@shared/schema";
 
 export default function Blog() {
   const { data: posts = [], isLoading, isFetching } = useQuery<BlogPost[]>({
     queryKey: ["/api/blog"],
     refetchOnMount: "always",
   });
+
+  const { data: settings } = useQuery<SiteSettings>({
+    queryKey: ["/api/settings"],
+  });
+
+  const siteTitle = settings?.title || "Consejos para tu Hogar";
+  const siteDescription = settings?.description || "Aprende sobre el mantenimiento de tu tinaco, cisterna y consejos prácticos para ahorrar agua y cuidar tu salud.";
 
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[] | null>(null);
 
@@ -82,6 +90,13 @@ export default function Blog() {
           {/* Search & Filter */}
           {!isLoading && posts.length > 0 && (
             <BlogSearch posts={posts} onFilter={handleFilter} />
+          )}
+
+          {/* Newsletter Subscription */}
+          {!isLoading && !isFiltering && (
+            <div className="my-16">
+              <Newsletter />
+            </div>
           )}
 
           {/* Blog Grid */}

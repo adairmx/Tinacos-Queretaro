@@ -5,10 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@assets/Logo-Monster-sin-fondo_1766172236864.webp";
 
+import { useQuery } from "@tanstack/react-query";
+import type { SiteSettings } from "@shared/schema";
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { data: settings } = useQuery<SiteSettings>({
+    queryKey: ["/api/settings"],
+  });
+
+  const siteTitle = settings?.title || "MonsterCo";
+  const siteDescription = settings?.description || "Lavado de tinacos y cisternas";
 
   const links = [
     { name: "Inicio", href: "/#home" },
@@ -54,7 +64,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
             <img 
               src={logo} 
-              alt="MonsterCo - Lavado de Tinacos en Querétaro" 
+              alt={`${siteTitle} - Lavado de Tinacos en Querétaro`} 
               className="h-10 w-auto object-contain"
               width="40"
               height="40"
@@ -62,10 +72,10 @@ export default function Navbar() {
             />
             <div className="flex flex-col">
                 <span className="font-brand font-black text-4xl text-black leading-none tracking-wide" style={{ WebkitTextStroke: "1px hsl(var(--primary))" }}>
-                    MonsterCo
+                    {siteTitle}
                 </span>
                 <span className="text-[0.65rem] sm:text-xs font-bold text-black uppercase tracking-wider leading-tight">
-                    Lavado de tinacos y cisternas
+                    {siteDescription}
                 </span>
             </div>
         </Link>

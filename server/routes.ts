@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertBlogPostSchema } from "@shared/schema";
+import { insertBlogPostSchema, insertAuthorSchema, insertSiteSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(
@@ -71,6 +71,70 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error deleting blog post:", error);
       res.status(500).json({ error: "Failed to delete blog post" });
+    }
+  });
+
+  // Author endpoints
+  app.get("/api/author", async (req, res) => {
+    try {
+      const author = await storage.getAuthor(1);
+      res.json(author || {});
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch author" });
+    }
+  });
+
+  app.get("/api/admin/author", async (req, res) => {
+    try {
+      const author = await storage.getAuthor(1); // Single author for now
+      res.json(author || {});
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch author" });
+    }
+  });
+
+  app.patch("/api/admin/author", async (req, res) => {
+    try {
+      const validatedData = insertAuthorSchema.partial().parse(req.body);
+      const author = await storage.updateAuthor(1, validatedData);
+      res.json(author);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update author" });
+    }
+  });
+
+  // Settings endpoints
+  app.get("/api/settings", async (req, res) => {
+    try {
+      const settings = await storage.getSiteSettings();
+      res.json(settings || {});
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch settings" });
+    }
+  });
+
+  app.get("/api/admin/settings", async (req, res) => {
+    try {
+      const settings = await storage.getSiteSettings();
+      res.json(settings || {});
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch settings" });
+    }
+  });
+
+  app.patch("/api/admin/settings", async (req, res) => {
+    try {
+      const validatedData = insertSiteSettingsSchema.partial().parse(req.body);
+      const settings = await storage.updateSiteSettings(validatedData);
+      res.json(settings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update settings" });
     }
   });
 

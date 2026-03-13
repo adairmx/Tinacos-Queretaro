@@ -7,8 +7,11 @@ import { Calendar, User, Share2, ArrowLeft, Clock, Tag } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import NotFound from "@/pages/not-found";
-import { TableOfContents } from "@/components/blog/TableOfContents";
-import { RelatedPosts } from "@/components/blog/RelatedPosts";
+import TableOfContents from "@/components/blog/TableOfContents";
+import RelatedPosts from "@/components/blog/RelatedPosts";
+import AuthorProfile from "@/components/blog/AuthorProfile";
+import Comments from "@/components/blog/Comments";
+import Newsletter from "@/components/blog/Newsletter";
 import ReactMarkdown from "react-markdown";
 import type { BlogPost as BlogPostType } from "@shared/schema";
 
