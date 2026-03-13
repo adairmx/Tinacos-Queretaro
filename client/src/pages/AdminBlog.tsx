@@ -211,7 +211,9 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
       
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || errorData.message || "Error al guardar");
+        const msg = errorData.message || errorData.error || "Error al guardar";
+        const diagnostic = errorData.error && errorData.message ? `${errorData.error}: ${errorData.message}` : msg;
+        throw new Error(diagnostic);
       }
       return res.json() as Promise<BlogPost>;
     },
@@ -221,6 +223,7 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
       onSaved(saved);
     },
     onError: (error: Error) => {
+      console.error("Save Error:", error);
       toast({ 
         variant: "destructive", 
         title: "Error al guardar",
@@ -443,7 +446,7 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
         <Button
           onClick={() => saveMutation.mutate()}
           disabled={saveMutation.isPending || isEmpty}
-          size="sm"
+          size={"sm" as any}
           className="gap-2 bg-primary hover:bg-primary/90 px-5"
         >
           {saveMutation.isPending ? (
