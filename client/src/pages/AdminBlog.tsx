@@ -208,7 +208,11 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData),
       });
-      if (!res.ok) throw new Error("Error al guardar");
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.message || "Error al guardar");
+      }
       return res.json() as Promise<BlogPost>;
     },
     onSuccess: (saved) => {
@@ -216,7 +220,13 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
       toast({ title: isNew ? "✅ Artículo publicado" : "✅ Cambios guardados" });
       onSaved(saved);
     },
-    onError: () => toast({ variant: "destructive", title: "Error al guardar" }),
+    onError: (error: Error) => {
+      toast({ 
+        variant: "destructive", 
+        title: "Error al guardar",
+        description: error.message 
+      });
+    },
   });
 
   const deleteMutation = useMutation({

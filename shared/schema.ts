@@ -47,17 +47,24 @@ export const siteSettings = pgTable("site_settings", {
   logo: text("logo"),
 });
 
-export const insertBlogPostSchema = createInsertSchema(blogPosts);
+export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({ 
+  id: true, 
+  createdAt: true 
+});
 export const selectBlogPostSchema = createSelectSchema(blogPosts);
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 
-export const insertAuthorSchema = createInsertSchema(authors);
+export const insertAuthorSchema = createInsertSchema(authors).omit({ 
+  id: true 
+});
 export const selectAuthorSchema = createSelectSchema(authors);
 export type Author = typeof authors.$inferSelect;
 export type InsertAuthor = z.infer<typeof insertAuthorSchema>;
 
-export const insertSiteSettingsSchema = createInsertSchema(siteSettings);
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings).omit({ 
+  id: true 
+});
 export const selectSiteSettingsSchema = createSelectSchema(siteSettings);
 export type SiteSettings = typeof siteSettings.$inferSelect;
 export type InsertSiteSettings = z.infer<typeof insertSiteSettingsSchema>;
