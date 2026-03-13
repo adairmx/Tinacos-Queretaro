@@ -1,18 +1,22 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { db } from "../lib/db.js";
 import { blogPosts, insertBlogPostSchema } from "../../shared/schema.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const { slug } = req.query;
+  const { slug: identifier } = req.query;
 
-  if (!slug || typeof slug !== "string") {
-    return res.status(400).json({ error: "Slug is required" });
+  if (!identifier || typeof identifier !== "string") {
+    return res.status(400).json({ error: "Identifier (id or slug) is required" });
   }
 
   try {
     if (req.method === "GET") {
-      const [post] = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug));
+      const [post] = await db
+        .select()
+        .from(blogPosts)
+        .where(or(eq(blogPosts.id, identifier), eq(blogPosts.slug, identifier)));
+      
       if (!post) {
         return res.status(404).json({ error: "Post not found" });
       }
@@ -24,16 +28,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const [post] = await db
         .update(blogPosts)
         .set(validatedData)
-        .where(eq(blogPosts.slug, slug))
+        .where(or(eq(blogPosts.id, identifier), eq(blogPosts.slug, identifier)))
         .returning();
+      
       if (!post) {
-        return res.status(404).json({ error: "Post not found" });
+        console.error(`Vercel API: Post not found for update with identifier: ${identifier}`);
+        return res.status(404).json({ 
+          error: "Post not found",
+          message: `No se encontró el artículo con ID o Slug: [${identifier}]`
+        });
       }
       return res.status(200).json(post);
     }
 
     if (req.method === "DELETE") {
-      await db.delete(blogPosts).where(eq(blogPosts.slug, slug));
+      await db
+        .delete(blogPosts)
+        .where(or(eq(blogPosts.id, identifier), eq(blogPosts.slug, identifier)));
       return res.status(204).send(null);
     }
 
