@@ -13,6 +13,7 @@ import AuthorProfile from "@/components/blog/AuthorProfile";
 import Comments from "@/components/blog/Comments";
 import Newsletter from "@/components/blog/Newsletter";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import type { BlogPost as BlogPostType } from "@shared/schema";
 
 export default function BlogPost() {
@@ -83,8 +84,8 @@ export default function BlogPost() {
           <div className="mb-6 max-w-5xl mx-auto">
             <Link to="/blog">
               <Button
-                variant="ghost"
-                size="sm"
+                variant={"ghost" as any}
+                size={"sm" as any}
                 className="gap-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -143,35 +144,39 @@ export default function BlogPost() {
               {/* Content */}
               <div className="prose prose-lg prose-slate mx-auto max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-primary prose-a:text-accent prose-img:rounded-xl prose-p:leading-relaxed">
                 <ReactMarkdown
+                  rehypePlugins={[rehypeRaw]}
                   components={{
-                    p: ({ children }) => (
-                      <p className="mb-6 leading-relaxed text-slate-700">{children}</p>
+                    p: ({ children, ...props }) => (
+                      <p {...props} className="mb-6 leading-relaxed text-slate-700">{children}</p>
                     ),
-                    h2: ({ children }) => (
-                      <h2 className="text-2xl font-bold mt-12 mb-5 text-primary">
+                    h2: ({ children, ...props }) => (
+                      <h2 {...props} className="text-2xl font-bold mt-12 mb-5 text-primary">
                         {children}
                       </h2>
                     ),
-                    h3: ({ children }) => (
-                      <h3 className="text-xl font-bold mt-8 mb-4 text-primary/80">
+                    h3: ({ children, ...props }) => (
+                      <h3 {...props} className="text-xl font-bold mt-8 mb-4 text-primary/80">
                         {children}
                       </h3>
                     ),
-                    ul: ({ children }) => (
-                      <ul className="list-disc list-inside space-y-2 mb-6 text-slate-700">
+                    ul: ({ children, ...props }) => (
+                      <ul {...props} className="list-disc list-inside space-y-2 mb-6 text-slate-700">
                         {children}
                       </ul>
                     ),
-                    ol: ({ children }) => (
-                      <ol className="list-decimal list-inside space-y-2 mb-6 text-slate-700">
+                    ol: ({ children, ...props }) => (
+                      <ol {...props} className="list-decimal list-inside space-y-2 mb-6 text-slate-700">
                         {children}
                       </ol>
                     ),
-                    li: ({ children }) => (
-                      <li className="leading-relaxed">{children}</li>
+                    li: ({ children, ...props }) => (
+                      <li {...props} className="leading-relaxed">{children}</li>
                     ),
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
+                    strong: ({ children, ...props }) => (
+                      <strong {...props} className="font-bold text-foreground">{children}</strong>
+                    ),
+                    blockquote: ({ children, ...props }) => (
+                      <blockquote {...props} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
                         {children}
                       </blockquote>
                     ),
@@ -190,8 +195,8 @@ export default function BlogPost() {
                   </p>
                 </div>
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant={"outline" as any}
+                  size={"sm" as any}
                   className="gap-2 hover:border-primary/50 hover:text-primary transition-colors"
                   onClick={handleShare}
                 >
