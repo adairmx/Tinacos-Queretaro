@@ -226,7 +226,7 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
       console.error("Save Error:", error);
       toast({ 
         variant: "destructive", 
-        title: "Error al guardar",
+        title: `Error al guardar (ID: ${post?.id || "nuevo"})`,
         description: error.message 
       });
     },
