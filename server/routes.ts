@@ -48,19 +48,23 @@ export async function registerRoutes(
   });
 
   app.patch("/api/blog/:id", async (req, res) => {
+    const id = req.params.id;
     try {
       const validatedData = insertBlogPostSchema.partial().parse(req.body);
-      const post = await storage.updateBlogPost(req.params.id, validatedData);
+      const post = await storage.updateBlogPost(id, validatedData);
       if (!post) {
-        return res.status(404).json({ error: "Post not found" });
+        return res.status(404).json({ 
+          error: "Post not found", 
+          message: `No se encontró el artículo con ID: [${id}]. Verifica si el artículo aún existe.` 
+        });
       }
       res.json(post);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid data", details: error.errors });
+        return res.status(400).json({ error: "Datos inválidos", details: error.errors });
       }
       console.error("Error updating blog post:", error);
-      res.status(500).json({ error: "Failed to update blog post" });
+      res.status(500).json({ error: "Error interno al actualizar el artículo" });
     }
   });
 
