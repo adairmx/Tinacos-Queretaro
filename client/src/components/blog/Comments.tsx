@@ -33,7 +33,7 @@ const mockComments: Comment[] = [
   },
 ];
 
-export default function Comments() {
+export default function Comments({ postId }: { postId: string }) {
   const [comments, setComments] = useState(mockComments);
   const [newComment, setNewComment] = useState("");
   const [isPosting, setIsPosting] = useState(false);

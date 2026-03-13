@@ -49,6 +49,72 @@ export default function BlogPost() {
     }
   };
 
+  // Dynamic SEO and Meta Tags
+  useEffect(() => {
+    if (post) {
+      // Update Title
+      document.title = `${post.title} | Lavado de Tinacos Querétaro`;
+      
+      // Update Meta Description
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute("content", post.excerpt || post.title);
+      }
+
+      // Update Open Graph tags
+      const updateOgTag = (property: string, content: string) => {
+        const tag = document.querySelector(`meta[property="${property}"]`);
+        if (tag) tag.setAttribute("content", content);
+      };
+
+      updateOgTag("og:title", post.title);
+      updateOgTag("og:description", post.excerpt || "");
+      updateOgTag("og:url", window.location.href);
+      updateOgTag("og:image", post.image || "https://lavadotinacos.com/opengraph.jpg");
+
+      // Update Twitter tags
+      const updateTwitterTag = (name: string, content: string) => {
+        const tag = document.querySelector(`meta[name="${name}"]`);
+        if (tag) tag.setAttribute("content", content);
+      };
+
+      updateTwitterTag("twitter:title", post.title);
+      updateTwitterTag("twitter:description", post.excerpt || "");
+      updateTwitterTag("twitter:image", post.image || "https://lavadotinacos.com/opengraph.jpg");
+
+      // Structured Data (JSON-LD)
+      const scriptId = "blog-post-json-ld";
+      let script = document.getElementById(scriptId) as HTMLScriptElement;
+      if (!script) {
+        script = document.createElement("script");
+        script.id = scriptId;
+        script.type = "application/ld+json";
+        document.head.appendChild(script);
+      }
+
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "image": [post.image],
+        "datePublished": post.createdAt || new Date().toISOString(),
+        "author": [{
+          "@type": "Person",
+          "name": post.author,
+          "url": "https://lavadotinacos.com/blog"
+        }]
+      };
+
+      script.text = JSON.stringify(structuredData);
+
+      return () => {
+        // Reset or cleanup if needed when leaving page
+        document.title = "Lavado de Tinacos en Querétaro | Limpieza y Desinfección Profesional";
+        if (script) script.remove();
+      };
+    }
+  }, [post]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background font-sans flex flex-col">
@@ -209,6 +275,19 @@ export default function BlogPost() {
               {allPosts.length > 1 && (
                 <RelatedPosts currentPost={post} allPosts={allPosts} />
               )}
+              
+              <div className="mt-16 pt-12 border-t border-slate-100">
+                <AuthorProfile />
+              </div>
+
+              <div className="mt-8">
+                <Newsletter />
+              </div>
+
+              {/* Comments Section */}
+              <div className="mt-16">
+                <Comments postId={post.id} />
+              </div>
             </article>
 
             {/* Table of Contents Sidebar */}
