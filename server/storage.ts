@@ -1,9 +1,17 @@
-import { users, blogPosts, authors, siteSettings, type User, type InsertUser, type BlogPost, type InsertBlogPost, type Author, type InsertAuthor, type SiteSettings, type InsertSiteSettings } from "@shared/schema";
+import { 
+  users, blogPosts, authors, siteSettings, providers, leads,
+  type User, type InsertUser, 
+  type BlogPost, type InsertBlogPost, 
+  type Author, type InsertAuthor, 
+  type SiteSettings, type InsertSiteSettings,
+  type Provider, type InsertProvider,
+  type Lead, type InsertLead
+} from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
+  getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
@@ -16,16 +24,29 @@ export interface IStorage {
 
   // Authors
   getAuthor(id: number): Promise<Author | undefined>;
-  getAuthorByUsername(username: string): Promise<Author | undefined>; // Placeholder for potential multi-author
+  getAuthorByUsername(username: string): Promise<Author | undefined>;
   updateAuthor(id: number, author: Partial<InsertAuthor>): Promise<Author>;
   
   // Settings
   getSiteSettings(): Promise<SiteSettings | undefined>;
   updateSiteSettings(settings: Partial<InsertSiteSettings>): Promise<SiteSettings>;
+
+  // Providers
+  getAllProviders(): Promise<Provider[]>;
+  getProvidersByCity(city: string): Promise<Provider[]>;
+  getProviderById(id: number): Promise<Provider | undefined>;
+  createProvider(provider: InsertProvider): Promise<Provider>;
+  updateProvider(id: number, provider: Partial<InsertProvider>): Promise<Provider | undefined>;
+
+  // Leads
+  getAllLeads(): Promise<Lead[]>;
+  getLeadById(id: number): Promise<Lead | undefined>;
+  createLead(lead: InsertLead): Promise<Lead>;
+  updateLead(id: number, lead: Partial<InsertLead>): Promise<Lead | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
-  async getUser(id: string): Promise<User | undefined> {
+  async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
@@ -137,6 +158,54 @@ export class DatabaseStorage implements IStorage {
     }
     const [settings] = await db.update(siteSettings).set(updateData).where(eq(siteSettings.id, 1)).returning();
     return settings;
+  }
+
+  // Providers
+  async getAllProviders(): Promise<Provider[]> {
+    return await db.select().from(providers).orderBy(desc(providers.createdAt));
+  }
+
+  async getProvidersByCity(city: string): Promise<Provider[]> {
+    return await db.select().from(providers).where(eq(providers.city, city)).orderBy(desc(providers.rating));
+  }
+
+  async getProviderById(id: number): Promise<Provider | undefined> {
+    const [provider] = await db.select().from(providers).where(eq(providers.id, id));
+    return provider || undefined;
+  }
+
+  async createProvider(insertProvider: InsertProvider): Promise<Provider> {
+    const [provider] = await db.insert(providers).values(insertProvider).returning();
+    return provider;
+  }
+
+  async updateProvider(id: number, updateData: Partial<InsertProvider>): Promise<Provider | undefined> {
+    const [provider] = await db.update(providers).set(updateData).where(eq(providers.id, id)).returning();
+    return provider || undefined;
+  }
+
+  // Leads
+  async getAllLeads(): Promise<Lead[]> {
+    return await db.select().from(leads).orderBy(desc(leads.createdAt));
+  }
+
+  async getLeadById(id: number): Promise<Lead | undefined> {
+    const [lead] = await db.select().from(leads).where(eq(leads.id, id));
+    return lead || undefined;
+  }
+
+  async createLead(insertLead: InsertLead): Promise<Lead> {
+    const [lead] = await db.insert(leads).values(insertLead).returning();
+    return lead;
+  }
+
+  async updateLead(id: number, updateData: Partial<InsertLead>): Promise<Lead | undefined> {
+    const [lead] = await db
+      .update(leads)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(leads.id, id))
+      .returning();
+    return lead || undefined;
   }
 }
 

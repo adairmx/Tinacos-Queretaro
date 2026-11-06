@@ -4,39 +4,41 @@ import { Check } from "lucide-react";
 export default function Pricing() {
   const plans = [
     {
-      name: "Básico - Tinaco",
-      price: "Desde $749*",
-      description: "Para tinacos de hasta 1,100 litros",
+      name: "Lavado de Tinaco",
+      price: "$1,050",
+      description: "Para tinacos residenciales de hasta 1,100 litros",
       features: [
-        "Lavado interior",
-        "Desinfección",
-        "Revisión de tapa",
-        "Revisión de flotador"
+        "Vaciado y retiro de sedimentos y lodos",
+        "Lavado y tallado a presión",
+        "Desinfección con grado bactericida",
+        "Revisión de flotador, tapa y pichancha",
+        "Técnicos certificados con equipo propio"
       ],
       highlight: false
     },
     {
-      name: "Paquete Completo",
-      price: "Desde $1,698",
-      description: "Tinaco (1,100L) + Cisterna (5,000L)",
+      name: "Paquete Dúo (Tinaco + Cisterna)",
+      price: "$2,200",
+      description: "Tinaco (1,100L) + Cisterna (hasta 5,000L)",
       features: [
-        "Ahorro garantizado",
-        "Lavado profundo de ambos",
-        "Desinfección total",
-        "Revisión de sistema de bombeo",
-        "Garantía de servicio"
+        "Ahorro de $200 en contratación conjunta",
+        "Lavado profundo integral de ambos depósitos",
+        "Desinfección profunda grado alimenticio",
+        "Revisión del sistema de bombeo e hidroneumático",
+        "Garantía de satisfacción y servicio certificado"
       ],
       highlight: true
     },
     {
-      name: "Cisterna",
-      price: "Desde $949",
-      description: "Para cisternas de hasta 5,000 litros",
+      name: "Lavado de Cisterna",
+      price: "$1,350",
+      description: "Para cisternas y aljibes de hasta 5,000 litros",
       features: [
-        "Extracción de sedimentos",
-        "Lavado a presión",
-        "Desinfección",
-        "Revisión de válvula pichancha"
+        "Extracción con bomba sumergible de achique",
+        "Lavado profundo de piso, paredes y techo",
+        "Desinfección antibacteriana profunda",
+        "Revisión de válvula pichancha y sellado",
+        "Garantía de agua cristalina y segura"
       ],
       highlight: false
     }
@@ -104,8 +106,8 @@ export default function Pricing() {
         </div>
         
         <div className="mt-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
-          <p>*Precio para clientes recurrentes que recontratan servicio dentro de los 12 meses siguientes al ultimo servicio.</p>
-          <p className="mt-2">** Los precios pueden variar dependiendo de las condiciones y ubicación exacta.</p>
+          <p className="font-medium text-foreground">💡 Precios fijos transparentes para servicio residencial estándar.</p>
+          <p className="mt-1">Para capacidades industriales, aljibes mayores a 10,000L o edificios comerciales, cotizamos de inmediato a tu medida.</p>
         </div>
       </div>
     </section>

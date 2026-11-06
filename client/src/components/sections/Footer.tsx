@@ -40,7 +40,41 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-slate-800 pt-8 text-center text-xs text-slate-500">
+        {/* Enlaces de Cobertura Nacional para SEO Local e Interlinking */}
+        <div className="border-t border-slate-800/80 pt-6 pb-2 text-xs text-slate-400">
+          <span className="font-bold text-slate-300 block mb-2 uppercase tracking-wider text-[11px]">
+            Cobertura Nacional de Lavado de Tinacos y Cisternas:
+          </span>
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+            <a href="/" className="hover:text-white transition-colors">Querétaro</a>
+            <span className="text-slate-600">•</span>
+            <a href="/cdmx" className="hover:text-white transition-colors">CDMX</a>
+            <span className="text-slate-600">•</span>
+            <a href="/edomex" className="hover:text-white transition-colors">Edomex</a>
+            <span className="text-slate-600">•</span>
+            <a href="/guadalajara" className="hover:text-white transition-colors">Guadalajara y Zapopan</a>
+            <span className="text-slate-600">•</span>
+            <a href="/monterrey" className="hover:text-white transition-colors">Monterrey</a>
+            <span className="text-slate-600">•</span>
+            <a href="/puebla" className="hover:text-white transition-colors">Puebla y Cholula</a>
+            <span className="text-slate-600">•</span>
+            <a href="/toluca" className="hover:text-white transition-colors">Toluca y Metepec</a>
+            <span className="text-slate-600">•</span>
+            <a href="/cuernavaca" className="hover:text-white transition-colors">Cuernavaca</a>
+            <span className="text-slate-600">•</span>
+            <a href="/leon" className="hover:text-white transition-colors">León</a>
+            <span className="text-slate-600">•</span>
+            <a href="/merida" className="hover:text-white transition-colors">Mérida</a>
+            <span className="text-slate-600">•</span>
+            <a href="/san-luis-potosi" className="hover:text-white transition-colors">San Luis Potosí</a>
+            <span className="text-slate-600">•</span>
+            <a href="/aguascalientes" className="hover:text-white transition-colors">Aguascalientes</a>
+            <span className="text-slate-600">•</span>
+            <a href="/cancun" className="hover:text-white transition-colors">Cancún</a>
+          </div>
+        </div>
+        
+        <div className="border-t border-slate-800 mt-6 pt-6 text-center text-xs text-slate-500">
           <p>&copy; {new Date().getFullYear()} {siteTitle}. Todos los derechos reservados.</p>
         </div>
       </div>

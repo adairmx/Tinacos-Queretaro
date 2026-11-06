@@ -8,6 +8,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const baseUrl = "https://lavadotinacos.com";
     
+    const cities = [
+      "cdmx",
+      "edomex",
+      "guadalajara",
+      "monterrey",
+      "puebla",
+      "toluca",
+      "cuernavaca",
+      "leon",
+      "merida",
+      "san-luis-potosi",
+      "aguascalientes",
+      "cancun"
+    ];
+    
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -18,8 +33,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   <url>
     <loc>${baseUrl}/blog</loc>
     <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  ${cities
+    .map((city) => `
+  <url>
+    <loc>${baseUrl}/${city}</loc>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+  <url>
+    <loc>${baseUrl}/ciudades/${city}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`)
+    .join("")}
   ${posts
     .map((post) => `
   <url>

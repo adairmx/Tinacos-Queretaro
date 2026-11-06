@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import CitySelector from "@/components/sections/CitySelector";
 import logo from "@assets/Logo-Monster-sin-fondo_1766172236864.webp";
 
 import { useQuery } from "@tanstack/react-query";
@@ -82,6 +83,7 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center gap-6">
+          <CitySelector />
           {links.map((link) => (
             <a
               key={link.name}
@@ -100,7 +102,8 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div className="lg:hidden">
+        <div className="lg:hidden flex items-center gap-2">
+          <CitySelector />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -109,6 +112,10 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent>
               <div className="flex flex-col gap-4 mt-8">
+                <div className="pb-2 border-b">
+                  <span className="text-xs text-muted-foreground font-semibold block mb-2">Tu Ciudad:</span>
+                  <CitySelector className="w-full" />
+                </div>
                 {links.map((link) => (
                   <a
                     key={link.name}

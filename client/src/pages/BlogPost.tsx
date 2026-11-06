@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, User, Share2, ArrowLeft, Clock, Tag } from "lucide-react";
+import { Calendar, User, Share2, ArrowLeft, Clock, Tag, MessageCircle, PhoneCall, ShieldCheck, Check } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import NotFound from "@/pages/not-found";
@@ -250,6 +250,59 @@ export default function BlogPost() {
                 >
                   {post.content}
                 </ReactMarkdown>
+              </div>
+
+              {/* Call to Action Banner de Conversión Directa */}
+              <div className="my-12 p-8 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 border-2 border-primary/20 shadow-lg text-center relative overflow-hidden">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-white text-xs font-bold mb-4 shadow-xs">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  Servicio Profesional Garantizado
+                </div>
+
+                <h3 className="font-heading text-2xl md:text-3xl font-extrabold text-foreground mb-3 leading-snug">
+                  ¿Prefieres que un profesional capacitado limpie tu tinaco o cisterna?
+                </h3>
+
+                <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto mb-6 leading-relaxed">
+                  Evita riesgos de subir a la azotea o ingresar a espacios confinados. Contamos con cuadrillas con hidrolavadora a presión, bombas de achique y desinfección bactericida en las principales ciudades de México.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-md mx-auto mb-4">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto bg-[#25D366] hover:bg-[#128C7E] text-white font-bold h-12 px-6 rounded-xl shadow-md text-base"
+                    asChild
+                  >
+                    <a
+                      href={`https://wa.me/5214425016667?text=${encodeURIComponent(
+                        `Hola, leí su artículo en el blog sobre "${post.title}" y me gustaría cotizar el servicio para mi domicilio.`
+                      )}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <MessageCircle className="w-5 h-5 mr-2 fill-current" />
+                      Cotizar por WhatsApp
+                    </a>
+                  </Button>
+
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto font-bold h-12 px-6 rounded-xl border-primary text-primary hover:bg-primary/5"
+                    asChild
+                  >
+                    <a href="tel:+524425016667">
+                      <PhoneCall className="w-4 h-4 mr-2" />
+                      Llamar Directo
+                    </a>
+                  </Button>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-4 text-xs font-semibold text-muted-foreground pt-2">
+                  <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Cero anticipos</span>
+                  <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Precios fijos transparentes</span>
+                  <span className="flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Pago contra entrega</span>
+                </div>
               </div>
 
               {/* Footer Actions */}

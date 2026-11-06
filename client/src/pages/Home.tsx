@@ -7,12 +7,12 @@ import FAQ from "@/components/sections/FAQ";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import WhatsAppButton from "@/components/sections/WhatsAppButton";
-import TrustBadge from "@/components/sections/TrustBadge";
+import MobileActionFooter from "@/components/sections/MobileActionFooter";
 import Reviews from "@/components/sections/Reviews";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background font-sans">
+    <div className="min-h-screen bg-background font-sans pb-16 md:pb-0">
       <Navbar />
       <main>
         <Hero />
@@ -25,6 +25,7 @@ export default function Home() {
       </main>
       <Footer />
       <WhatsAppButton />
+      <MobileActionFooter />
     </div>
   );
 }

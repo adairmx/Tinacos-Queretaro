@@ -9,6 +9,12 @@ import Home from "@/pages/Home";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
 import AdminBlog from "@/pages/AdminBlog";
+import AdminLeads from "@/pages/AdminLeads";
+import CityPage from "@/pages/CityPage";
+
+function CityDirectWrapper({ citySlug }: { citySlug: string }) {
+  return <CityPage />;
+}
 
 function App() {
   return (
@@ -22,6 +28,23 @@ function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/admin/blog" element={<AdminBlog />} />
+            <Route path="/admin/leads" element={<AdminLeads />} />
+            
+            {/* Rutas SEO Local por Metrópoli */}
+            <Route path="/ciudades/:citySlug" element={<CityPage />} />
+            <Route path="/cdmx" element={<CityPage />} />
+            <Route path="/edomex" element={<CityPage />} />
+            <Route path="/guadalajara" element={<CityPage />} />
+            <Route path="/monterrey" element={<CityPage />} />
+            <Route path="/puebla" element={<CityPage />} />
+            <Route path="/toluca" element={<CityPage />} />
+            <Route path="/cuernavaca" element={<CityPage />} />
+            <Route path="/leon" element={<CityPage />} />
+            <Route path="/merida" element={<CityPage />} />
+            <Route path="/san-luis-potosi" element={<CityPage />} />
+            <Route path="/aguascalientes" element={<CityPage />} />
+            <Route path="/cancun" element={<CityPage />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
