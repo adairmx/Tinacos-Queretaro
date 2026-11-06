@@ -38,20 +38,41 @@ export default function BlogPost() {
     queryKey: ["/api/blog"],
   });
 
-  // Dividir el contenido a la mitad para insertar el anuncio en el cuerpo del artículo
+  // Dividir el contenido en 3 bloques para insertar 3 anuncios dentro del cuerpo
   const contentParts = post?.content ? (() => {
-    const firstH2 = post.content.indexOf("\n## ");
-    if (firstH2 !== -1) {
-      const secondH2 = post.content.indexOf("\n## ", firstH2 + 4);
-      if (secondH2 !== -1) {
-        return {
-          part1: post.content.substring(0, secondH2),
-          part2: post.content.substring(secondH2),
-        };
-      }
+    const content = post.content.trim();
+    const paragraphs = content.split(/\n\n+/);
+    
+    // Si tiene 6 o más párrafos, dividirlo en 3 tercios naturales
+    if (paragraphs.length >= 6) {
+      const third = Math.floor(paragraphs.length / 3);
+      return {
+        part1: paragraphs.slice(0, third).join("\n\n"),
+        part2: paragraphs.slice(third, third * 2).join("\n\n"),
+        part3: paragraphs.slice(third * 2).join("\n\n"),
+      };
     }
-    return { part1: post.content, part2: "" };
-  })() : { part1: "", part2: "" };
+
+    // Si tiene menos párrafos pero tiene subtítulos H2
+    const firstH2 = content.indexOf("\n## ");
+    const secondH2 = firstH2 !== -1 ? content.indexOf("\n## ", firstH2 + 4) : -1;
+    
+    if (firstH2 !== -1 && secondH2 !== -1) {
+      return {
+        part1: content.substring(0, firstH2),
+        part2: content.substring(firstH2, secondH2),
+        part3: content.substring(secondH2),
+      };
+    }
+
+    // Fallback para artículos cortos
+    const half = Math.floor(content.length / 2);
+    return {
+      part1: content.substring(0, half),
+      part2: content.substring(half),
+      part3: "",
+    };
+  })() : { part1: "", part2: "", part3: "" };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -225,6 +246,7 @@ export default function BlogPost() {
 
               {/* Content */}
               <div className="prose prose-lg prose-slate mx-auto max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-primary prose-a:text-accent prose-img:rounded-xl prose-p:leading-relaxed">
+                {/* Bloque 1 de Contenido */}
                 <ReactMarkdown
                   rehypePlugins={[rehypeRaw]}
                   components={{
@@ -267,11 +289,12 @@ export default function BlogPost() {
                   {contentParts.part1}
                 </ReactMarkdown>
 
-                {/* Anuncio AdSense dentro del CUERPO del artículo */}
+                {/* Anuncio 1 dentro del CUERPO */}
                 {contentParts.part2 && (
-                  <AdSenseBanner className="my-10" />
+                  <AdSenseBanner className="my-8" />
                 )}
 
+                {/* Bloque 2 de Contenido */}
                 {contentParts.part2 && (
                   <ReactMarkdown
                     rehypePlugins={[rehypeRaw]}
@@ -315,6 +338,59 @@ export default function BlogPost() {
                     {contentParts.part2}
                   </ReactMarkdown>
                 )}
+
+                {/* Anuncio 2 (EN MEDIO) dentro del CUERPO */}
+                {contentParts.part3 && (
+                  <AdSenseBanner className="my-8" />
+                )}
+
+                {/* Bloque 3 de Contenido */}
+                {contentParts.part3 && (
+                  <ReactMarkdown
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                      p: ({ children, ...props }) => (
+                        <p {...props} className="mb-6 leading-relaxed text-slate-700">{children}</p>
+                      ),
+                      h2: ({ children, ...props }) => (
+                        <h2 {...props} className="text-2xl font-bold mt-12 mb-5 text-primary">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children, ...props }) => (
+                        <h3 {...props} className="text-xl font-bold mt-8 mb-4 text-primary/80">
+                          {children}
+                        </h3>
+                      ),
+                      ul: ({ children, ...props }) => (
+                        <ul {...props} className="list-disc list-inside space-y-2 mb-6 text-slate-700">
+                          {children}
+                        </ul>
+                      ),
+                      ol: ({ children, ...props }) => (
+                        <ol {...props} className="list-decimal list-inside space-y-2 mb-6 text-slate-700">
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children, ...props }) => (
+                        <li {...props} className="leading-relaxed">{children}</li>
+                      ),
+                      strong: ({ children, ...props }) => (
+                        <strong {...props} className="font-bold text-foreground">{children}</strong>
+                      ),
+                      blockquote: ({ children, ...props }) => (
+                        <blockquote {...props} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
+                          {children}
+                        </blockquote>
+                      ),
+                    }}
+                  >
+                    {contentParts.part3}
+                  </ReactMarkdown>
+                )}
+
+                {/* Anuncio 3 (CIERRE DEL CUERPO) antes del CTA */}
+                <AdSenseBanner className="my-8" />
               </div>
 
               {/* Call to Action Banner de Conversión Directa */}
