@@ -38,6 +38,21 @@ export default function BlogPost() {
     queryKey: ["/api/blog"],
   });
 
+  // Dividir el contenido a la mitad para insertar el anuncio en el cuerpo del artículo
+  const contentParts = post?.content ? (() => {
+    const firstH2 = post.content.indexOf("\n## ");
+    if (firstH2 !== -1) {
+      const secondH2 = post.content.indexOf("\n## ", firstH2 + 4);
+      if (secondH2 !== -1) {
+        return {
+          part1: post.content.substring(0, secondH2),
+          part2: post.content.substring(secondH2),
+        };
+      }
+    }
+    return { part1: post.content, part2: "" };
+  })() : { part1: "", part2: "" };
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -208,9 +223,6 @@ export default function BlogPost() {
                 </div>
               </header>
 
-              {/* Anuncio AdSense Superior */}
-              <AdSenseBanner className="mb-8" />
-
               {/* Content */}
               <div className="prose prose-lg prose-slate mx-auto max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-primary prose-a:text-accent prose-img:rounded-xl prose-p:leading-relaxed">
                 <ReactMarkdown
@@ -252,12 +264,58 @@ export default function BlogPost() {
                     ),
                   }}
                 >
-                  {post.content}
+                  {contentParts.part1}
                 </ReactMarkdown>
-              </div>
 
-              {/* Anuncio AdSense Inferior */}
-              <AdSenseBanner className="my-8" />
+                {/* Anuncio AdSense dentro del CUERPO del artículo */}
+                {contentParts.part2 && (
+                  <AdSenseBanner className="my-10" />
+                )}
+
+                {contentParts.part2 && (
+                  <ReactMarkdown
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                      p: ({ children, ...props }) => (
+                        <p {...props} className="mb-6 leading-relaxed text-slate-700">{children}</p>
+                      ),
+                      h2: ({ children, ...props }) => (
+                        <h2 {...props} className="text-2xl font-bold mt-12 mb-5 text-primary">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children, ...props }) => (
+                        <h3 {...props} className="text-xl font-bold mt-8 mb-4 text-primary/80">
+                          {children}
+                        </h3>
+                      ),
+                      ul: ({ children, ...props }) => (
+                        <ul {...props} className="list-disc list-inside space-y-2 mb-6 text-slate-700">
+                          {children}
+                        </ul>
+                      ),
+                      ol: ({ children, ...props }) => (
+                        <ol {...props} className="list-decimal list-inside space-y-2 mb-6 text-slate-700">
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children, ...props }) => (
+                        <li {...props} className="leading-relaxed">{children}</li>
+                      ),
+                      strong: ({ children, ...props }) => (
+                        <strong {...props} className="font-bold text-foreground">{children}</strong>
+                      ),
+                      blockquote: ({ children, ...props }) => (
+                        <blockquote {...props} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
+                          {children}
+                        </blockquote>
+                      ),
+                    }}
+                  >
+                    {contentParts.part2}
+                  </ReactMarkdown>
+                )}
+              </div>
 
               {/* Call to Action Banner de Conversión Directa */}
               <div className="my-12 p-8 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 border-2 border-primary/20 shadow-lg text-center relative overflow-hidden">
