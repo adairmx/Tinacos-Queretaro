@@ -12,6 +12,7 @@ import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import AuthorProfile from "@/components/blog/AuthorProfile";
 import Comments from "@/components/blog/Comments";
 import Newsletter from "@/components/blog/Newsletter";
+import AdSenseBanner from "@/components/blog/AdSenseBanner";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import type { BlogPost as BlogPostType } from "@shared/schema";
@@ -207,6 +208,9 @@ export default function BlogPost() {
                 </div>
               </header>
 
+              {/* Anuncio AdSense Superior */}
+              <AdSenseBanner className="mb-8" />
+
               {/* Content */}
               <div className="prose prose-lg prose-slate mx-auto max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-primary prose-a:text-accent prose-img:rounded-xl prose-p:leading-relaxed">
                 <ReactMarkdown
@@ -251,6 +255,9 @@ export default function BlogPost() {
                   {post.content}
                 </ReactMarkdown>
               </div>
+
+              {/* Anuncio AdSense Inferior */}
+              <AdSenseBanner className="my-8" />
 
               {/* Call to Action Banner de Conversión Directa */}
               <div className="my-12 p-8 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 border-2 border-primary/20 shadow-lg text-center relative overflow-hidden">

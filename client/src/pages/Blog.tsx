@@ -6,6 +6,7 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogSearch } from "@/components/blog/BlogSearch";
 import { FeaturedPost } from "@/components/blog/FeaturedPost";
 import Newsletter from "@/components/blog/Newsletter";
+import AdSenseBanner from "@/components/blog/AdSenseBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { BlogPost, SiteSettings } from "@shared/schema";
 
@@ -86,6 +87,9 @@ export default function Blog() {
           {featuredPost && !isLoading && !isFiltering && (
             <FeaturedPost post={featuredPost} />
           )}
+
+          {/* Banner Publicitario Superior */}
+          <AdSenseBanner className="max-w-4xl mx-auto my-10" />
 
           {/* Search & Filter */}
           {!isLoading && posts.length > 0 && (
