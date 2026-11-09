@@ -8,7 +8,7 @@
     { "source": "/api/admin/author", "destination": "/api/author" },
     { "source": "/blog/:slug", "destination": "/api/page?slug=:slug" },
     { "source": "/", "destination": "/index.html" },
-    { "source": "/(blog|unete|cdmx|edomex|guadalajara|monterrey|puebla|toluca|cuernavaca|leon|merida|san-luis-potosi|aguascalientes|cancun)", "destination": "/index.html" },
+    { "source": "/(blog|cdmx|edomex|guadalajara|monterrey|puebla|toluca|cuernavaca|leon|merida|san-luis-potosi|aguascalientes|cancun)", "destination": "/index.html" },
     { "source": "/ciudades/:path*", "destination": "/index.html" },
     { "source": "/admin/:path*", "destination": "/index.html" },
     { "source": "/((?!api/).*)", "destination": "/api/page" }

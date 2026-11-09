@@ -12,7 +12,6 @@ import BlogPost from "@/pages/BlogPost";
 import AdminBlog from "@/pages/AdminBlog";
 import AdminLeads from "@/pages/AdminLeads";
 import CityPage from "@/pages/CityPage";
-import JoinNetwork from "@/pages/JoinNetwork";
 
 function CityDirectWrapper({ citySlug }: { citySlug: string }) {
   return <CityPage />;
@@ -32,7 +31,6 @@ function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/admin/blog" element={<AdminBlog />} />
             <Route path="/admin/leads" element={<AdminLeads />} />
-            <Route path="/unete" element={<JoinNetwork />} />
             
             {/* Rutas SEO Local por Metrópoli */}
             <Route path="/ciudades/:citySlug" element={<CityPage />} />
