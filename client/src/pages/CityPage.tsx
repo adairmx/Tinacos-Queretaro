@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
+import { useSeo } from "@/hooks/use-seo";
 import { citiesData } from "@/data/citiesData";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
@@ -31,6 +32,12 @@ export default function CityPage() {
   const pathSegment = location.pathname.replace(/^\/(ciudades\/)?/, "").split("/")[0]?.toLowerCase();
   const slug = (citySlug || pathSegment || "").toLowerCase();
   const city = citiesData[slug];
+
+  useSeo({
+    title: city?.seoTitle,
+    description: city?.seoDescription,
+    path: `/${slug}`,
+  });
 
   useEffect(() => {
     if (city) {

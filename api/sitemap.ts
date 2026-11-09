@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { db } from "./lib/db.js";
+import { db } from "./_lib/db.js";
 import { blogPosts } from "../shared/schema.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -41,11 +41,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <loc>${baseUrl}/${city}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/ciudades/${city}</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
   </url>`)
     .join("")}
   ${posts

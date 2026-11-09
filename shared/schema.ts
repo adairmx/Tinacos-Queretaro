@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer, serial } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, serial, uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -86,6 +86,20 @@ export const leads = pgTable("leads", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// Pruebas A/B: el índice único hace que cada visitante cuente una sola vez por evento.
+export const abEvents = pgTable(
+  "ab_events",
+  {
+    id: serial("id").primaryKey(),
+    experiment: text("experiment").notNull(),
+    variant: text("variant").notNull(),
+    visitorId: text("visitor_id").notNull(),
+    event: text("event").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("ab_events_unique").on(table.experiment, table.visitorId, table.event)],
+);
 
 export const insertProviderSchema = createInsertSchema(providers).omit({
   id: true,

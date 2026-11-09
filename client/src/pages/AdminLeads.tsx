@@ -14,17 +14,21 @@ import {
   RefreshCw,
   ArrowLeft,
   Search,
-  ExternalLink
+  ExternalLink,
+  FlaskConical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import AdminGate from "@/components/AdminGate";
+import ExperimentResults from "@/components/ExperimentResults";
+import { adminFetch } from "@/lib/adminAuth";
 import type { Lead, Provider } from "@shared/schema";
 
-export default function AdminLeads() {
+function AdminLeadsDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<"leads" | "providers">("leads");
+  const [activeTab, setActiveTab] = useState<"leads" | "providers" | "experiment">("leads");
   const [cityFilter, setCityFilter] = useState<string>("todas");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -32,7 +36,7 @@ export default function AdminLeads() {
   const { data: leads = [], isLoading: loadingLeads } = useQuery<Lead[]>({
     queryKey: ["/api/leads"],
     queryFn: async () => {
-      const res = await fetch("/api/leads");
+      const res = await adminFetch("/api/leads");
       if (!res.ok) throw new Error("Error fetching leads");
       return res.json();
     },
@@ -41,7 +45,7 @@ export default function AdminLeads() {
   const { data: providers = [], isLoading: loadingProviders } = useQuery<Provider[]>({
     queryKey: ["/api/providers"],
     queryFn: async () => {
-      const res = await fetch("/api/providers");
+      const res = await adminFetch("/api/providers");
       if (!res.ok) throw new Error("Error fetching providers");
       return res.json();
     },
@@ -50,7 +54,7 @@ export default function AdminLeads() {
   // Mutations
   const updateLeadMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: Partial<Lead> }) => {
-      const res = await fetch(`/api/leads/${id}`, {
+      const res = await adminFetch(`/api/leads/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
@@ -66,7 +70,7 @@ export default function AdminLeads() {
 
   const updateProviderMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: Partial<Provider> }) => {
-      const res = await fetch(`/api/providers/${id}`, {
+      const res = await adminFetch(`/api/providers/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
@@ -215,7 +219,18 @@ export default function AdminLeads() {
 
         {/* Tabs & Filters */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border shadow-xs">
-          <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+            <button
+              onClick={() => setActiveTab("experiment")}
+              className={`order-last px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
+                activeTab === "experiment"
+                  ? "bg-primary text-white shadow-xs"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              <FlaskConical className="h-4 w-4" />
+              Prueba A/B
+            </button>
             <button
               onClick={() => setActiveTab("leads")}
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
@@ -263,6 +278,8 @@ export default function AdminLeads() {
             </select>
           </div>
         </div>
+
+        {activeTab === "experiment" && <ExperimentResults />}
 
         {/* CONTENIDO TAB 1: LEADS */}
         {activeTab === "leads" && (
@@ -540,3 +557,6 @@ export default function AdminLeads() {
   );
 }
 
+export default function AdminLeads() {
+  return <AdminGate>{() => <AdminLeadsDashboard />}</AdminGate>;
+}

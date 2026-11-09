@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, Clock, ArrowRight, Tag } from "lucide-react";
+import { onCoverError } from "@/lib/coverImage";
 import type { BlogPost } from "@shared/schema";
 
 interface FeaturedPostProps {
@@ -16,6 +17,7 @@ export function FeaturedPost({ post }: FeaturedPostProps) {
           <img
             src={post.image}
             alt={post.title}
+            onError={onCoverError}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Calendar, User, ArrowRight, Clock, Tag } from "lucide-react";
+import { onCoverError } from "@/lib/coverImage";
 import type { BlogPost } from "@shared/schema";
 
 interface BlogCardProps {
@@ -16,6 +17,10 @@ export function BlogCard({ post }: BlogCardProps) {
           <img
             src={post.image}
             alt={post.title}
+            width={640}
+            height={360}
+            loading="lazy"
+            onError={onCoverError}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

@@ -13,6 +13,8 @@ import {
   ChevronRight, Clock, AlertTriangle, User as UserIcon,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AdminGate from "@/components/AdminGate";
+import { adminFetch } from "@/lib/adminAuth";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
 import type { BlogPost, InsertBlogPost, Author, SiteSettings } from "@shared/schema";
@@ -35,48 +37,6 @@ function wordCount(text: string) {
   return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
 }
 
-// ─── Login ────────────────────────────────────────────────────────────────────
-function LoginScreen({ onLogin }: { onLogin: () => void }) {
-  const { toast } = useToast();
-  const [pw, setPw] = useState("");
-
-  const handle = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pw === "admin123") {
-      onLogin();
-    } else {
-      toast({ variant: "destructive", title: "Contraseña incorrecta" });
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[#0f0f11] flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm bg-[#18181b] border-white/10 shadow-2xl">
-        <CardHeader className="text-center pb-2">
-          <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <LayoutDashboard className="w-6 h-6 text-primary" />
-          </div>
-          <CardTitle className="text-white text-xl">Content Manager</CardTitle>
-          <CardDescription className="text-white/50">Panel de administración del blog</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handle} className="space-y-4">
-            <Input
-              type="password"
-              value={pw}
-              onChange={(e) => setPw(e.target.value)}
-              placeholder="Contraseña"
-              className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
-              autoFocus
-              required
-            />
-            <Button type="submit" className="w-full">Entrar</Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 // ─── Nav Section Item ─────────────────────────────────────────────────────────
 function NavItem({
@@ -203,7 +163,7 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
     mutationFn: async () => {
       const url = isNew ? "/api/blog" : `/api/blog/${post!.id}`;
       const method = isNew ? "POST" : "PATCH";
-      const res = await fetch(url, {
+      const res = await adminFetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData),
@@ -234,7 +194,7 @@ function EditPanel({ post, isNew, onSaved, onDeleted }: EditPanelProps) {
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`/api/blog/${post!.id}`, { method: "DELETE" });
+      const res = await adminFetch(`/api/blog/${post!.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Error");
     },
     onSuccess: () => {
@@ -497,7 +457,7 @@ function CMS({ onLogout }: { onLogout: () => void }) {
 
   const saveAuthorMutation = useMutation({
     mutationFn: async (data: Partial<Author>) => {
-      const res = await fetch("/api/admin/author", {
+      const res = await adminFetch("/api/admin/author", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -514,7 +474,7 @@ function CMS({ onLogout }: { onLogout: () => void }) {
 
   const saveSettingsMutation = useMutation({
     mutationFn: async (data: Partial<SiteSettings>) => {
-      const res = await fetch("/api/admin/settings", {
+      const res = await adminFetch("/api/admin/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -814,7 +774,5 @@ function CMS({ onLogout }: { onLogout: () => void }) {
 
 // ─── Root ────────────────────────────────────────────────────────────────────
 export default function AdminBlog() {
-  const [isAuth, setIsAuth] = useState(false);
-  if (!isAuth) return <LoginScreen onLogin={() => setIsAuth(true)} />;
-  return <CMS onLogout={() => setIsAuth(false)} />;
+  return <AdminGate>{(logout) => <CMS onLogout={logout} />}</AdminGate>;
 }

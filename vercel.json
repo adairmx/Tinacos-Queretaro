@@ -4,7 +4,14 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/api/admin/settings", "destination": "/api/settings" },
+    { "source": "/api/admin/author", "destination": "/api/author" },
+    { "source": "/blog/:slug", "destination": "/api/page?slug=:slug" },
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/(blog|unete|cdmx|edomex|guadalajara|monterrey|puebla|toluca|cuernavaca|leon|merida|san-luis-potosi|aguascalientes|cancun)", "destination": "/index.html" },
+    { "source": "/ciudades/:path*", "destination": "/index.html" },
+    { "source": "/admin/:path*", "destination": "/index.html" },
+    { "source": "/((?!api/).*)", "destination": "/api/page" }
   ],
   "headers": [
     {
@@ -17,20 +24,11 @@
       ]
     },
     {
-      "source": "/(.*)\\.(jpg|jpeg|png|gif|webp|svg|ico)",
+      "source": "/images/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(js|css)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+          "value": "public, max-age=2592000"
         }
       ]
     },

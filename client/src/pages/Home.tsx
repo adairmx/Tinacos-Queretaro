@@ -1,7 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSeo } from "@/hooks/use-seo";
+import { getHomeVariant, startHomeTracking } from "@/lib/experiment";
 import Navbar from "@/components/sections/Navbar";
 import Hero from "@/components/sections/Hero";
+import HeroClassic from "@/components/sections/HeroClassic";
 import Services from "@/components/sections/Services";
+import Process from "@/components/sections/Process";
 import ServiceZones from "@/components/sections/ServiceZones";
 import Pricing from "@/components/sections/Pricing";
 import FAQ from "@/components/sections/FAQ";
@@ -12,33 +16,25 @@ import MobileActionFooter from "@/components/sections/MobileActionFooter";
 import Reviews from "@/components/sections/Reviews";
 
 export default function Home() {
-  // Limpiar cualquier anuncio flotante al entrar a Home
-  useEffect(() => {
-    const removeAdSenseOverlays = () => {
-      const overlays = document.querySelectorAll(
-        "ins.adsbygoogle[data-anchor-status], .google-auto-placed, iframe[id^='aswift_']"
-      );
-      overlays.forEach((el) => {
-        // Solo remover elementos flotantes o anclados de pantalla completa
-        if (el.parentElement === document.body || (el as HTMLElement).style.position === "fixed") {
-          el.remove();
-        }
-      });
-    };
+  const [variant] = useState(getHomeVariant);
 
-    removeAdSenseOverlays();
-    // Repetir brevemente por si AdSense intentaba inyectar
-    const timeout = setTimeout(removeAdSenseOverlays, 300);
-    return () => clearTimeout(timeout);
-  }, []);
+  useEffect(() => startHomeTracking(), []);
+
+  useSeo({
+    title: "Lavado de Tinacos y Cisternas en Querétaro y México | MonsterCo",
+    description:
+      "Lavado y desinfección profesional de tinacos y cisternas con hidrolavadora. Precios fijos, cero anticipos y pago contra entrega en Querétaro y 12 ciudades de México.",
+    path: "/",
+  });
 
   return (
     <div className="min-h-screen bg-background font-sans pb-16 md:pb-0">
       <Navbar />
       <main>
-        <Hero />
+        {variant === "classic" ? <HeroClassic /> : <Hero />}
         <Reviews />
         <Services />
+        {variant === "quote" && <Process />}
         <ServiceZones />
         <Pricing />
         <FAQ />

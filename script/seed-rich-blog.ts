@@ -11,7 +11,7 @@ const newArticles = [
     readingTime: 6,
     date: "10 Ene 2026",
     author: "Equipo Técnico",
-    image: "/attached_assets/generated_images/water_pipe_leak_detection_concept.png",
+    image: "/images/blog/agua-amarilla-mal-olor-regadera.webp",
     content: `
 El agua potable que entra a tu hogar debería ser inodora, incolora e insípida. Si al abrir las llaves del lavabo o meterte a bañar notas una tonalidad amarillenta, pardusca o detectas un olor desagradable (similar a drenaje, huevo podrido o tierra húmeda), no lo tomes a la ligera: **es una alerta roja de contaminación en tus depósitos de almacenamiento**.
 
@@ -54,7 +54,7 @@ La única forma segura y duradera de resolver el agua amarilla o con mal olor es
     readingTime: 5,
     date: "18 Ene 2026",
     author: "Equipo Técnico",
-    image: "/attached_assets/generated_images/water_tank_on_roof-BI6lztFO.png",
+    image: "/images/blog/cada-cuanto-lavar-tinaco-cisterna.webp",
     content: `
 Muchos propietarios en México esperan a que el agua salga con tierra o que el tinaco huela mal para acordarse de su existencia. Sin embargo, para cuando el agua presenta síntomas visibles, el contenedor ya lleva semanas o meses funcionando como un caldo de cultivo bacteriano.
 
@@ -88,7 +88,7 @@ Llevar este control no solo protege la salud estomacal y de la piel de quienes v
     readingTime: 7,
     date: "24 Ene 2026",
     author: "Equipo Técnico",
-    image: "/attached_assets/generated_images/clean_underground_cistern_interior-CiMablVl.png",
+    image: "/images/blog/eliminar-lama-verde-tinaco.webp",
     content: `
 Destapas tu tinaco en la azotea y te encuentras con un panorama desagradable: las paredes internas tienen una capa verdosa, babosa y en el agua flotan hebras de lama verde. ¿Por qué ocurre esto y qué consecuencias tiene?
 
@@ -122,7 +122,7 @@ El 95% de los casos de verdín en azoteas se debe a uno de estos dos errores:
     readingTime: 6,
     date: "02 Feb 2026",
     author: "Equipo Técnico",
-    image: "/attached_assets/generated_images/water_tank_vs_cistern_comparison.png",
+    image: "/images/blog/precio-lavado-tinacos-y-cisternas.webp",
     content: `
 Contratar el servicio de limpieza de tinaco o cisterna es una de las inversiones con mayor retorno para el mantenimiento del hogar. Sin embargo, en internet y en la calle existe una gran disparidad de presupuestos: personas que cobran $300 pesos y empresas que cotizan más de $2,500.
 
@@ -163,7 +163,7 @@ Exige siempre un servicio formal, con equipo a presión, bombas de achique y pro
     readingTime: 6,
     date: "12 Feb 2026",
     author: "Equipo Técnico",
-    image: "/attached_assets/generated_images/low_water_pressure_faucet.png",
+    image: "/images/blog/sarro-en-tinaco-y-calentador.webp",
     content: `
 ¿Has notado que la presión de tu regadera disminuye poco a poco, que el agua caliente sale con menos fuerza que la fría, o que en el fondo de las ollas queda una costra blanquecina al hervir agua?
 
@@ -197,7 +197,8 @@ async function seedRichBlog() {
         excerpt = EXCLUDED.excerpt,
         content = EXCLUDED.content,
         category = EXCLUDED.category,
-        reading_time = EXCLUDED.reading_time;
+        reading_time = EXCLUDED.reading_time,
+        image = EXCLUDED.image;
     `, [
       post.title,
       post.slug,

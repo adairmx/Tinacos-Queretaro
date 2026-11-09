@@ -1,24 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { eq } from "drizzle-orm";
-import { db } from "../lib/db.js";
+import { db } from "../_lib/db.js";
+import { requireAdmin } from "../_lib/auth.js";
 import { leads } from "../../shared/schema.js";
 
 export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
 ) {
-  // CORS
-  response.setHeader("Access-Control-Allow-Credentials", "true");
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader("Access-Control-Allow-Methods", "PATCH,OPTIONS");
-  response.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-  );
-
-  if (request.method === "OPTIONS") {
-    return response.status(200).end();
-  }
 
   const { id } = request.query;
   const leadId = parseInt(id as string, 10);
@@ -28,6 +17,7 @@ export default async function handler(
   }
 
   if (request.method === "PATCH") {
+    if (!requireAdmin(request, response)) return;
     try {
       let body;
       try {

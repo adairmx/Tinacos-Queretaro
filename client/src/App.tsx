@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ScrollToTop from "@/components/ScrollToTop";
+import AdRouteGuard from "@/components/AdRouteGuard";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Blog from "@/pages/Blog";
@@ -11,6 +12,7 @@ import BlogPost from "@/pages/BlogPost";
 import AdminBlog from "@/pages/AdminBlog";
 import AdminLeads from "@/pages/AdminLeads";
 import CityPage from "@/pages/CityPage";
+import JoinNetwork from "@/pages/JoinNetwork";
 
 function CityDirectWrapper({ citySlug }: { citySlug: string }) {
   return <CityPage />;
@@ -20,6 +22,7 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <AdRouteGuard />
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
@@ -29,6 +32,7 @@ function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/admin/blog" element={<AdminBlog />} />
             <Route path="/admin/leads" element={<AdminLeads />} />
+            <Route path="/unete" element={<JoinNetwork />} />
             
             {/* Rutas SEO Local por Metrópoli */}
             <Route path="/ciudades/:citySlug" element={<CityPage />} />

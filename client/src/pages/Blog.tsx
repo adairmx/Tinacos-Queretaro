@@ -6,7 +6,8 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogSearch } from "@/components/blog/BlogSearch";
 import { FeaturedPost } from "@/components/blog/FeaturedPost";
 import Newsletter from "@/components/blog/Newsletter";
-import AdSenseBanner from "@/components/blog/AdSenseBanner";
+import AdSenseBanner, { AD_SLOTS } from "@/components/blog/AdSenseBanner";
+import { useSeo } from "@/hooks/use-seo";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { BlogPost, SiteSettings } from "@shared/schema";
 
@@ -22,6 +23,12 @@ export default function Blog() {
 
   const siteTitle = settings?.title || "Consejos para tu Hogar";
   const siteDescription = settings?.description || "Aprende sobre el mantenimiento de tu tinaco, cisterna y consejos prácticos para ahorrar agua y cuidar tu salud.";
+
+  useSeo({
+    title: "Blog: consejos para tinacos y cisternas | MonsterCo",
+    description: siteDescription,
+    path: "/blog",
+  });
 
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[] | null>(null);
 
@@ -89,7 +96,7 @@ export default function Blog() {
           )}
 
           {/* Banner Publicitario Superior */}
-          <AdSenseBanner className="max-w-4xl mx-auto my-10" />
+          <AdSenseBanner slot={AD_SLOTS.article1} className="max-w-4xl mx-auto my-10" />
 
           {/* Search & Filter */}
           {!isLoading && posts.length > 0 && (

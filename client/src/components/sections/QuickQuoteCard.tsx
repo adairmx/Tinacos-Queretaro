@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { citiesData } from "@/data/citiesData";
+import { trackExperiment } from "@/lib/experiment";
 import { Calculator, CheckCircle2, MessageCircle, Sparkles, MapPin } from "lucide-react";
 
 export default function QuickQuoteCard() {
@@ -38,11 +40,14 @@ export default function QuickQuoteCard() {
       return;
     }
 
+    trackExperiment("quote_submit");
     setIsSubmitting(true);
     try {
       // Guardar el lead en nuestra base de datos
-      await fetch("/api/leads", {
+      // Sin await: los navegadores bloquean window.open si ocurre después de una espera.
+      void fetch("/api/leads", {
         method: "POST",
+        keepalive: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           clientName: name,
@@ -54,7 +59,7 @@ export default function QuickQuoteCard() {
           source: "web_cotizador",
           status: "nuevo",
         }),
-      });
+      }).catch((error) => console.warn("No se pudo guardar el lead:", error));
 
       // Redirigir a WhatsApp con el mensaje ya armado
       const text = encodeURIComponent(
@@ -119,11 +124,10 @@ export default function QuickQuoteCard() {
             className="w-full h-11 px-3 rounded-xl border border-input bg-muted/20 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <option value="Querétaro">Santiago de Querétaro y Zona Metropolitana</option>
-            <option value="Ciudad de México">Ciudad de México (CDMX)</option>
-            <option value="Guadalajara">Guadalajara y Zapopan (Jalisco)</option>
-            <option value="Puebla">Puebla y Cholula</option>
-            <option value="León">León (Guanajuato)</option>
-            <option value="Otra Ciudad">Otra Ciudad (Cobertura Nacional)</option>
+            {Object.values(citiesData).map(({ name: cityName }) => (
+              <option key={cityName} value={cityName}>{cityName}</option>
+            ))}
+            <option value="Otra Ciudad">Otra ciudad</option>
           </select>
         </div>
 

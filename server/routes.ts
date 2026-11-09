@@ -166,6 +166,15 @@ export async function registerRoutes(
     }
   });
 
+  // Solo desarrollo local: en producción responde api/admin/login.ts.
+  app.post("/api/admin/login", (req, res) => {
+    const password = process.env.ADMIN_PASSWORD;
+    if (!password || req.body?.password !== password) {
+      return res.status(401).json({ error: "Contraseña incorrecta" });
+    }
+    res.json({ token: "local-dev" });
+  });
+
   app.patch("/api/admin/author", async (req, res) => {
     try {
       const validatedData = insertAuthorSchema.partial().parse(req.body);

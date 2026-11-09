@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,44 @@ import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import AuthorProfile from "@/components/blog/AuthorProfile";
 import Comments from "@/components/blog/Comments";
 import Newsletter from "@/components/blog/Newsletter";
-import AdSenseBanner from "@/components/blog/AdSenseBanner";
+import AdSenseBanner, { AD_SLOTS } from "@/components/blog/AdSenseBanner";
 import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import type { Components } from "react-markdown";
+import { absoluteUrl, SITE_NAME, SITE_URL, useSeo } from "@/hooks/use-seo";
+import { onCoverError } from "@/lib/coverImage";
+import { splitArticle } from "@/lib/splitArticle";
 import type { BlogPost as BlogPostType } from "@shared/schema";
+
+const markdownComponents: Components = {
+  p: ({ node, children, ...props }) => (
+    <p {...props} className="mb-6 leading-relaxed text-slate-700">{children}</p>
+  ),
+  h2: ({ node, children, ...props }) => (
+    <h2 {...props} className="text-2xl font-bold mt-12 mb-5 text-primary">{children}</h2>
+  ),
+  h3: ({ node, children, ...props }) => (
+    <h3 {...props} className="text-xl font-bold mt-8 mb-4 text-primary/80">{children}</h3>
+  ),
+  ul: ({ node, children, ...props }) => (
+    <ul {...props} className="list-disc pl-6 space-y-2 mb-6 text-slate-700">{children}</ul>
+  ),
+  ol: ({ node, children, ...props }) => (
+    <ol {...props} className="list-decimal pl-6 space-y-2 mb-6 text-slate-700">{children}</ol>
+  ),
+  li: ({ node, children, ...props }) => (
+    <li {...props} className="leading-relaxed">{children}</li>
+  ),
+  strong: ({ node, children, ...props }) => (
+    <strong {...props} className="font-bold text-foreground">{children}</strong>
+  ),
+  blockquote: ({ node, children, ...props }) => (
+    <blockquote {...props} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
+      {children}
+    </blockquote>
+  ),
+};
+
+const articleSlots = [AD_SLOTS.article1, AD_SLOTS.article2, AD_SLOTS.article3];
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -27,8 +61,6 @@ export default function BlogPost() {
     };
   }, [queryClient]);
 
-  if (!slug) return <NotFound />;
-
   const { data: post, isLoading } = useQuery<BlogPostType>({
     queryKey: [`/api/blog/${slug}`],
     enabled: !!slug,
@@ -38,41 +70,10 @@ export default function BlogPost() {
     queryKey: ["/api/blog"],
   });
 
-  // Dividir el contenido en 3 bloques para insertar 3 anuncios dentro del cuerpo
-  const contentParts = post?.content ? (() => {
-    const content = post.content.trim();
-    const paragraphs = content.split(/\n\n+/);
-    
-    // Si tiene 6 o más párrafos, dividirlo en 3 tercios naturales
-    if (paragraphs.length >= 6) {
-      const third = Math.floor(paragraphs.length / 3);
-      return {
-        part1: paragraphs.slice(0, third).join("\n\n"),
-        part2: paragraphs.slice(third, third * 2).join("\n\n"),
-        part3: paragraphs.slice(third * 2).join("\n\n"),
-      };
-    }
-
-    // Si tiene menos párrafos pero tiene subtítulos H2
-    const firstH2 = content.indexOf("\n## ");
-    const secondH2 = firstH2 !== -1 ? content.indexOf("\n## ", firstH2 + 4) : -1;
-    
-    if (firstH2 !== -1 && secondH2 !== -1) {
-      return {
-        part1: content.substring(0, firstH2),
-        part2: content.substring(firstH2, secondH2),
-        part3: content.substring(secondH2),
-      };
-    }
-
-    // Fallback para artículos cortos
-    const half = Math.floor(content.length / 2);
-    return {
-      part1: content.substring(0, half),
-      part2: content.substring(half),
-      part3: "",
-    };
-  })() : { part1: "", part2: "", part3: "" };
+  const articleParts = useMemo(
+    () => (post?.content ? splitArticle(post.content).filter(Boolean) : []),
+    [post?.content],
+  );
 
   const handleShare = () => {
     if (navigator.share) {
@@ -86,71 +87,30 @@ export default function BlogPost() {
     }
   };
 
-  // Dynamic SEO and Meta Tags
-  useEffect(() => {
-    if (post) {
-      // Update Title
-      document.title = `${post.title} | Lavado de Tinacos Querétaro`;
-      
-      // Update Meta Description
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute("content", post.excerpt || post.title);
-      }
-
-      // Update Open Graph tags
-      const updateOgTag = (property: string, content: string) => {
-        const tag = document.querySelector(`meta[property="${property}"]`);
-        if (tag) tag.setAttribute("content", content);
-      };
-
-      updateOgTag("og:title", post.title);
-      updateOgTag("og:description", post.excerpt || "");
-      updateOgTag("og:url", window.location.href);
-      updateOgTag("og:image", post.image || "https://lavadotinacos.com/opengraph.jpg");
-
-      // Update Twitter tags
-      const updateTwitterTag = (name: string, content: string) => {
-        const tag = document.querySelector(`meta[name="${name}"]`);
-        if (tag) tag.setAttribute("content", content);
-      };
-
-      updateTwitterTag("twitter:title", post.title);
-      updateTwitterTag("twitter:description", post.excerpt || "");
-      updateTwitterTag("twitter:image", post.image || "https://lavadotinacos.com/opengraph.jpg");
-
-      // Structured Data (JSON-LD)
-      const scriptId = "blog-post-json-ld";
-      let script = document.getElementById(scriptId) as HTMLScriptElement;
-      if (!script) {
-        script = document.createElement("script");
-        script.id = scriptId;
-        script.type = "application/ld+json";
-        document.head.appendChild(script);
-      }
-
-      const structuredData = {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "headline": post.title,
-        "image": [post.image],
-        "datePublished": post.createdAt || new Date().toISOString(),
-        "author": [{
-          "@type": "Person",
-          "name": post.author,
-          "url": "https://lavadotinacos.com/blog"
-        }]
-      };
-
-      script.text = JSON.stringify(structuredData);
-
-      return () => {
-        // Reset or cleanup if needed when leaving page
-        document.title = "Lavado de Tinacos en Querétaro | Limpieza y Desinfección Profesional";
-        if (script) script.remove();
-      };
-    }
-  }, [post]);
+  useSeo({
+    title: post ? `${post.title} | MonsterCo` : undefined,
+    description: post?.excerpt,
+    path: slug ? `/blog/${slug}` : undefined,
+    image: post?.image,
+    type: "article",
+    jsonLd: post
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+          headline: post.title,
+          description: post.excerpt,
+          image: [absoluteUrl(post.image)],
+          datePublished: post.createdAt,
+          author: { "@type": "Organization", name: post.author },
+          publisher: {
+            "@type": "Organization",
+            name: SITE_NAME,
+            logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.png` },
+          },
+        }
+      : undefined,
+  });
 
   if (isLoading) {
     return (
@@ -205,6 +165,10 @@ export default function BlogPost() {
                 <img
                   src={post.image}
                   alt={post.title}
+                  width={1200}
+                  height={675}
+                  fetchPriority="high"
+                  onError={onCoverError}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -246,151 +210,12 @@ export default function BlogPost() {
 
               {/* Content */}
               <div className="prose prose-lg prose-slate mx-auto max-w-none prose-headings:font-heading prose-headings:font-bold prose-headings:text-primary prose-a:text-accent prose-img:rounded-xl prose-p:leading-relaxed">
-                {/* Bloque 1 de Contenido */}
-                <ReactMarkdown
-                  rehypePlugins={[rehypeRaw]}
-                  components={{
-                    p: ({ children, ...props }) => (
-                      <p {...props} className="mb-6 leading-relaxed text-slate-700">{children}</p>
-                    ),
-                    h2: ({ children, ...props }) => (
-                      <h2 {...props} className="text-2xl font-bold mt-12 mb-5 text-primary">
-                        {children}
-                      </h2>
-                    ),
-                    h3: ({ children, ...props }) => (
-                      <h3 {...props} className="text-xl font-bold mt-8 mb-4 text-primary/80">
-                        {children}
-                      </h3>
-                    ),
-                    ul: ({ children, ...props }) => (
-                      <ul {...props} className="list-disc list-inside space-y-2 mb-6 text-slate-700">
-                        {children}
-                      </ul>
-                    ),
-                    ol: ({ children, ...props }) => (
-                      <ol {...props} className="list-decimal list-inside space-y-2 mb-6 text-slate-700">
-                        {children}
-                      </ol>
-                    ),
-                    li: ({ children, ...props }) => (
-                      <li {...props} className="leading-relaxed">{children}</li>
-                    ),
-                    strong: ({ children, ...props }) => (
-                      <strong {...props} className="font-bold text-foreground">{children}</strong>
-                    ),
-                    blockquote: ({ children, ...props }) => (
-                      <blockquote {...props} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
-                        {children}
-                      </blockquote>
-                    ),
-                  }}
-                >
-                  {contentParts.part1}
-                </ReactMarkdown>
-
-                {/* Anuncio 1 dentro del CUERPO */}
-                {contentParts.part2 && (
-                  <AdSenseBanner className="my-8" />
-                )}
-
-                {/* Bloque 2 de Contenido */}
-                {contentParts.part2 && (
-                  <ReactMarkdown
-                    rehypePlugins={[rehypeRaw]}
-                    components={{
-                      p: ({ children, ...props }) => (
-                        <p {...props} className="mb-6 leading-relaxed text-slate-700">{children}</p>
-                      ),
-                      h2: ({ children, ...props }) => (
-                        <h2 {...props} className="text-2xl font-bold mt-12 mb-5 text-primary">
-                          {children}
-                        </h2>
-                      ),
-                      h3: ({ children, ...props }) => (
-                        <h3 {...props} className="text-xl font-bold mt-8 mb-4 text-primary/80">
-                          {children}
-                        </h3>
-                      ),
-                      ul: ({ children, ...props }) => (
-                        <ul {...props} className="list-disc list-inside space-y-2 mb-6 text-slate-700">
-                          {children}
-                        </ul>
-                      ),
-                      ol: ({ children, ...props }) => (
-                        <ol {...props} className="list-decimal list-inside space-y-2 mb-6 text-slate-700">
-                          {children}
-                        </ol>
-                      ),
-                      li: ({ children, ...props }) => (
-                        <li {...props} className="leading-relaxed">{children}</li>
-                      ),
-                      strong: ({ children, ...props }) => (
-                        <strong {...props} className="font-bold text-foreground">{children}</strong>
-                      ),
-                      blockquote: ({ children, ...props }) => (
-                        <blockquote {...props} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
-                          {children}
-                        </blockquote>
-                      ),
-                    }}
-                  >
-                    {contentParts.part2}
-                  </ReactMarkdown>
-                )}
-
-                {/* Anuncio 2 (EN MEDIO) dentro del CUERPO */}
-                {contentParts.part3 && (
-                  <AdSenseBanner className="my-8" />
-                )}
-
-                {/* Bloque 3 de Contenido */}
-                {contentParts.part3 && (
-                  <ReactMarkdown
-                    rehypePlugins={[rehypeRaw]}
-                    components={{
-                      p: ({ children, ...props }) => (
-                        <p {...props} className="mb-6 leading-relaxed text-slate-700">{children}</p>
-                      ),
-                      h2: ({ children, ...props }) => (
-                        <h2 {...props} className="text-2xl font-bold mt-12 mb-5 text-primary">
-                          {children}
-                        </h2>
-                      ),
-                      h3: ({ children, ...props }) => (
-                        <h3 {...props} className="text-xl font-bold mt-8 mb-4 text-primary/80">
-                          {children}
-                        </h3>
-                      ),
-                      ul: ({ children, ...props }) => (
-                        <ul {...props} className="list-disc list-inside space-y-2 mb-6 text-slate-700">
-                          {children}
-                        </ul>
-                      ),
-                      ol: ({ children, ...props }) => (
-                        <ol {...props} className="list-decimal list-inside space-y-2 mb-6 text-slate-700">
-                          {children}
-                        </ol>
-                      ),
-                      li: ({ children, ...props }) => (
-                        <li {...props} className="leading-relaxed">{children}</li>
-                      ),
-                      strong: ({ children, ...props }) => (
-                        <strong {...props} className="font-bold text-foreground">{children}</strong>
-                      ),
-                      blockquote: ({ children, ...props }) => (
-                        <blockquote {...props} className="border-l-4 border-primary pl-4 italic text-muted-foreground my-6">
-                          {children}
-                        </blockquote>
-                      ),
-                    }}
-                  >
-                    {contentParts.part3}
-                  </ReactMarkdown>
-                )}
-
-                {/* Anuncio 3 (CIERRE DEL CUERPO) antes del CTA */}
-                <AdSenseBanner className="my-8" />
+                {articleParts.map((part, index) => (
+                  <section key={index}>
+                    <ReactMarkdown components={markdownComponents}>{part}</ReactMarkdown>
+                    <AdSenseBanner slot={articleSlots[index]} />
+                  </section>
+                ))}
               </div>
 
               {/* Call to Action Banner de Conversión Directa */}

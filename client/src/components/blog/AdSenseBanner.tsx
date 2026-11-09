@@ -1,80 +1,70 @@
 import { useEffect, useRef } from "react";
 
+const AD_CLIENT = "ca-pub-6155360579424146";
+export const ADSENSE_SCRIPT_ID = "google-adsense-script";
+
+export const AD_SLOTS = {
+  article1: "6386158878",
+  article2: "1820227908",
+  article3: "2049513958",
+} as const;
+
+declare global {
+  interface Window {
+    adsbygoogle?: unknown[];
+  }
+}
+
+function ensureAdSenseScript() {
+  if (document.getElementById(ADSENSE_SCRIPT_ID)) return;
+
+  const script = document.createElement("script");
+  script.id = ADSENSE_SCRIPT_ID;
+  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT}`;
+  script.async = true;
+  script.crossOrigin = "anonymous";
+  document.head.appendChild(script);
+}
+
 interface AdSenseBannerProps {
-  slot?: string;
-  format?: "auto" | "fluid" | "rectangle" | "horizontal";
-  responsive?: boolean;
+  slot: string;
   className?: string;
 }
 
-export default function AdSenseBanner({
-  slot,
-  format = "auto",
-  responsive = true,
-  className = "",
-}: AdSenseBannerProps) {
+export default function AdSenseBanner({ slot, className = "" }: AdSenseBannerProps) {
   const adRef = useRef<HTMLModElement | null>(null);
-  const pushedRef = useRef(false);
 
   useEffect(() => {
-    // 1. Asegurar que el script de AdSense esté presente solo cuando se visualiza el blog
-    const scriptId = "google-adsense-script";
-    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
-    
-    if (!script) {
-      script = document.createElement("script");
-      script.id = scriptId;
-      script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6155360579424146";
-      script.async = true;
-      script.crossOrigin = "anonymous";
-      document.head.appendChild(script);
-    }
+    ensureAdSenseScript();
 
-    // 2. Registrar el bloque publicitario una sola vez
-    if (!pushedRef.current) {
-      try {
-        if (typeof window !== "undefined") {
-          const adsbygoogle = (window as any).adsbygoogle || [];
-          adsbygoogle.push({});
-          pushedRef.current = true;
-        }
-      } catch (err) {
-        console.warn("AdSense push:", err);
-      }
-    }
+    // AdSense marca el bloque con este atributo; evita pedir dos veces el mismo anuncio.
+    if (!adRef.current || adRef.current.getAttribute("data-adsbygoogle-status")) return;
 
-    // 3. Al desmontar el blog (cuando el usuario regresa a Home):
-    // Limpiar cualquier anuncio ancla flotante que Google inyecta en el pie de página
-    return () => {
-      // Eliminar elementos flotantes inyectados por Google Auto Ads
-      const anchors = document.querySelectorAll(
-        "ins.adsbygoogle[data-anchor-status], .google-auto-placed, div[id^='aswift_']"
-      );
-      anchors.forEach((el) => {
-        // Solo remover si está fuera del contenedor de contenido principal (anuncios ancla flotantes)
-        if (!el.closest("article") && !el.closest(".adsense-container")) {
-          el.remove();
-        }
-      });
-    };
+    try {
+      // Debe ser el arreglo global: la cola se procesa cuando termina de cargar el script.
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (err) {
+      console.warn("AdSense push:", err);
+    }
   }, []);
 
   return (
-    <div className={`adsense-container my-8 w-full max-w-3xl mx-auto text-center overflow-hidden clear-both ${className}`}>
-      <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 block mb-1">
-        Publicidad Patrocinada
+    <aside
+      aria-label="Publicidad"
+      className={`adsense-container not-prose my-8 w-full max-w-3xl mx-auto text-center clear-both ${className}`}
+    >
+      <span className="text-[10px] uppercase font-semibold tracking-widest text-slate-400 block mb-1">
+        Publicidad
       </span>
-      <div className="bg-slate-50/60 border border-slate-200/80 rounded-2xl p-2 min-h-[250px] flex items-center justify-center">
-        <ins
-          ref={adRef}
-          className="adsbygoogle"
-          style={{ display: "block", minHeight: "250px", width: "100%" }}
-          data-ad-client="ca-pub-6155360579424146"
-          data-ad-slot={slot || undefined}
-          data-ad-format={format}
-          data-full-width-responsive={responsive ? "true" : "false"}
-        />
-      </div>
-    </div>
+      <ins
+        ref={adRef}
+        className="adsbygoogle"
+        style={{ display: "block", minHeight: "250px", width: "100%" }}
+        data-ad-client={AD_CLIENT}
+        data-ad-slot={slot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </aside>
   );
 }

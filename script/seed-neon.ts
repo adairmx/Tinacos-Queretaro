@@ -1,4 +1,4 @@
-import { db } from "./lib/db.js";
+import { db } from "../api/_lib/db.js";
 import { blogPosts } from "../shared/schema.js";
 
 const initialPosts = [

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { eq, or } from "drizzle-orm";
-import { db } from "../lib/db.js";
+import { db } from "../_lib/db.js";
+import { requireAdmin } from "../_lib/auth.js";
 import { blogPosts, insertBlogPostSchema } from "../../shared/schema.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -24,6 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === "PATCH") {
+      if (!requireAdmin(req, res)) return;
       const validatedData = insertBlogPostSchema.partial().parse(req.body);
       const [post] = await db
         .update(blogPosts)
@@ -42,6 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === "DELETE") {
+      if (!requireAdmin(req, res)) return;
       await db
         .delete(blogPosts)
         .where(or(eq(blogPosts.id, identifier), eq(blogPosts.slug, identifier)));
