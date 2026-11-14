@@ -65,7 +65,7 @@ export async function anotarAcuse(db: Db, acuse: Acuse) {
  * sin tener una cita en curso (alguien nuevo, o un cliente que vuelve) entra a la bandeja de leads.
  * Regresa false si ese mensaje ya se había recibido.
  */
-export async function recibirMensaje(db: Db, mensaje: MensajeEntrante) {
+export async function recibirMensaje(db: Db, mensaje: MensajeEntrante, opciones: { loAtiendeElAgente?: boolean } = {}) {
   return db.transaccion(async (tx) => {
     const [proveedor] = await tx.query<{ id: number; nombre: string }>("SELECT id, nombre FROM proveedores WHERE telefono = $1", [mensaje.telefono]);
     const [servicio] = await tx.query<{ id: number; cliente_nombre: string }>(
@@ -86,8 +86,9 @@ export async function recibirMensaje(db: Db, mensaje: MensajeEntrante) {
       quien = `${servicio.cliente_nombre} (servicio #${servicio.id})`;
     } else {
       const { prospecto, repetido } = await guardarProspecto(tx, { nombre: mensaje.nombre, telefono: mensaje.telefono, notas: mensaje.texto, origen: "whatsapp" });
-      // Un lead nuevo ya trae su propio aviso; si esa persona vuelve a escribir, la casa también se entera.
-      if (!repetido) return true;
+      // Un lead nuevo ya trae su propio aviso. Si vuelve a escribir, la casa se entera, salvo que le esté contestando
+      // el agente: entonces sólo se le avisa cuando el agente le pasa la plática.
+      if (!repetido || opciones.loAtiendeElAgente) return true;
       quien = `${prospecto.nombre} (lead #${prospecto.id})`;
     }
     await avisarALaCasa(tx, "mensaje_entrante", `${quien} escribió por WhatsApp: «${mensaje.texto.slice(0, 500)}»`, {

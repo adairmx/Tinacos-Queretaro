@@ -65,12 +65,23 @@ toma un servicio en 30 minutos se le avisa a Adair.
   días de un servicio terminado (de 10 a 18 h, sólo si el cliente no ha vuelto). Si la víspera nadie ha tomado el
   servicio, no se le confirma al cliente: se le avisa a la casa.
 
+- Agente de mensajes (`server/agente/`): `guion.ts` es el guion (primera versión, sin las grabaciones de Adair),
+  `herramientas.ts` lo que puede hacer (consultar horarios, agendar, pasar la plática a una persona), `claude.ts` lo
+  conecta a Claude con el SDK de Anthropic (modelo `claude-opus-5-5`, esfuerzo `low`, ambos por variable) y
+  `atender.ts` contesta solo los WhatsApp de quien no es proveedor ni tiene cita en curso, esperando unos segundos a
+  que termine de escribir. Pestaña «Agente» del panel = simulador: horarios reales, pero no agenda ni avisa.
+  Necesita `ANTHROPIC_API_KEY`; contesta solo únicamente con `AGENTE_ACTIVO=1` y WhatsApp conectado.
+  **Al 14 nov 2026 no se ha corrido contra Claude de verdad** (no había llave): las pruebas usan un modelo de
+  mentiras que sigue un libreto. Lo primero al tener llave es platicar con él en el simulador y ajustar el guion.
+
 ## Dónde está publicado
 
 Railway, proyecto `lavadotinacos-operacion` (servicio `operacion` + `Postgres`), desde el 14 nov 2026:
-<https://operacion-production-cbe2ae1e.up.railway.app>. Despliega solo con cada push a `main` de
-`adairmx/Tinacos-Queretaro` que toque esta carpeta (patrón de vigilancia `/operacion/**`, con la diagonal al inicio: sin ella Railway no despliega) (carpeta raíz `/operacion`, `npm run build`, `npm start`, salud en
-`/api/salud`). El mismo push también vuelve a publicar el sitio en Vercel. Variables puestas: `DATABASE_URL`,
+<https://operacion-production-cbe2ae1e.up.railway.app>. Fuente: `main` de `adairmx/Tinacos-Queretaro`, carpeta raíz `/operacion`, patrón de vigilancia `/operacion/**`,
+`npm run build`, `npm start`, salud en `/api/salud`. **El despliegue automático al hacer push no está funcionando**
+(14 nov 2026: dos pushes no dispararon nada); mientras Adair no lo active en Railway (servicio → Settings → Source),
+tras cada push hay que volver a conectar la fuente con la herramienta de Railway, que construye el último commit.
+El mismo push también vuelve a publicar el sitio en Vercel. Variables puestas: `DATABASE_URL`,
 `NODE_ENV`, `URL_PUBLICA`, `CLAVE_DEL_SITIO`, `NPM_CONFIG_INCLUDE=dev` (sin ella no se instalan las herramientas de compilación).
 `ADMIN_PASSWORD` y las de WhatsApp las pone Adair en Railway; sin `ADMIN_PASSWORD` nadie entra a administración.
 
@@ -80,7 +91,8 @@ Railway, proyecto `lavadotinacos-operacion` (servicio `operacion` + `Postgres`),
 2. Conectar WhatsApp: el código ya está; falta de Adair el número, la cuenta de WhatsApp Business en Meta (token,
    id del número, id de la cuenta, secreto de la app), aprobar las plantillas y publicar el servidor para que Meta
    alcance el webhook.
-3. Agente de mensajes (WhatsApp y Messenger) con el guion que salga de las grabaciones de llamadas de Adair.
+3. Agente de mensajes: construido (WhatsApp); falta la llave de Claude, probarlo en el simulador, afinar el guion
+   con las grabaciones de Adair, y Messenger.
 4. Agente de voz entrante y luego saliente (Twilio + los motores que ya usa Justicia: Phonic, PolyAI, Deepgram).
 5. Publicarlo (Railway, con Postgres, desde esta carpeta). Falta decidir la dirección de los portales (por ejemplo
    un subdominio de lavadotinacos.com) y qué pasa con el número 442 501 6667.

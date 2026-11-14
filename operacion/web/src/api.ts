@@ -31,6 +31,17 @@ async function pedir<T>(metodo: string, ruta: string, cuerpo?: unknown): Promise
 }
 
 export type Yo = { tipo: "admin" } | { tipo: "proveedor"; proveedor: Proveedor; protocolosVigentes: boolean };
+export interface TurnoDePrueba {
+  rol: "cliente" | "agente";
+  texto: string;
+}
+
+export interface RespuestaDelAgente {
+  texto: string;
+  herramientas: { nombre: string; entrada: unknown; resultado: string }[];
+  pasoAHumano: boolean;
+}
+
 export type AvisoConEnlace = Aviso & { whatsapp: string | null };
 
 export interface CambiosDeProveedor {
@@ -83,4 +94,6 @@ export const api = {
     pedir<Prospecto>("POST", `/admin/prospectos/${id}`, { estado, motivo: motivo || null }),
   cuentas: () => pedir<Saldo[]>("GET", "/admin/cuentas"),
   estado: () => pedir<{ whatsapp: boolean }>("GET", "/admin/estado"),
+  agente: () => pedir<{ configurado: boolean; contestaSolo: boolean; modelo: string; guion: string }>("GET", "/admin/agente"),
+  probarAgente: (mensajes: TurnoDePrueba[]) => pedir<RespuestaDelAgente>("POST", "/admin/agente/probar", { mensajes }),
 };

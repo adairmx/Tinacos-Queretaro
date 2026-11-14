@@ -66,6 +66,10 @@ function whatsappFalso(falla?: () => Error | undefined) {
       enviados.push({ telefono, plantilla, variables });
       return `wamid.${enviados.length}`;
     },
+    async enviarTexto(telefono: string, texto: string) {
+      enviados.push({ telefono, plantilla: "texto", variables: [texto] });
+      return `wamid.${enviados.length}`;
+    },
   };
 }
 

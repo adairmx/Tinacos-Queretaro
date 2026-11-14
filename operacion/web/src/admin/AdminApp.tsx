@@ -3,6 +3,7 @@ import { api } from "../api.ts";
 import { useSesion } from "../sesion.tsx";
 import { Boton, useDatos } from "../ui.tsx";
 import { Agendar } from "./Agendar.tsx";
+import { Agente } from "./Agente.tsx";
 import { Avisos } from "./Avisos.tsx";
 import { Cuentas } from "./Cuentas.tsx";
 import { Prospectos } from "./Prospectos.tsx";
@@ -23,6 +24,7 @@ export default function AdminApp() {
     { a: "/admin/avisos", texto: "Avisos", burbuja: pendientes },
     { a: "/admin/proveedores", texto: "Proveedores" },
     { a: "/admin/cuentas", texto: "Cuentas" },
+    { a: "/admin/agente", texto: "Agente" },
   ];
 
   return (
@@ -58,6 +60,7 @@ export default function AdminApp() {
           <Route path="avisos" element={<Avisos {...avisos} />} />
           <Route path="proveedores" element={<Proveedores />} />
           <Route path="cuentas" element={<Cuentas />} />
+          <Route path="agente" element={<Agente />} />
         </Routes>
       </main>
     </div>

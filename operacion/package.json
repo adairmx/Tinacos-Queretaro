@@ -17,6 +17,7 @@
     "pruebas:postgres": "tsx scripts/pruebas-postgres.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@electric-sql/pglite": "^0.5.16",
     "express": "^5.3.0",
     "pg": "^8.23.1",

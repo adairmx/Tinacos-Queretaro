@@ -38,6 +38,8 @@ export class ErrorDeWhatsApp extends Error {
 export interface WhatsApp {
   /** Manda una plantilla aprobada a un teléfono mexicano de 10 dígitos; regresa el identificador del mensaje. */
   enviarPlantilla(telefono: string, plantilla: NombreDePlantilla, variables: string[]): Promise<string>;
+  /** Manda texto libre. WhatsApp sólo lo permite dentro de las 24 horas siguientes al último mensaje de la persona. */
+  enviarTexto(telefono: string, texto: string): Promise<string>;
 }
 
 interface Opciones {
@@ -48,9 +50,31 @@ interface Opciones {
 }
 
 export function crearWhatsApp({ token, phoneNumberId, fetchImpl = fetch }: Opciones): WhatsApp {
+  async function mandar(cuerpo: object) {
+    let respuesta: Response;
+    try {
+      respuesta = await fetchImpl(`${GRAPH}/${phoneNumberId}/messages`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(cuerpo),
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch {
+      throw new ErrorDeWhatsApp("No se pudo conectar con WhatsApp.", true);
+    }
+
+    const datos = (await respuesta.json().catch(() => ({}))) as { messages?: { id?: string }[]; error?: { code?: number; message?: string } };
+    const wamid = datos.messages?.[0]?.id;
+    if (respuesta.ok && wamid) return wamid;
+
+    const codigo = datos.error?.code;
+    const mensaje = (codigo && MENSAJES[codigo]) || datos.error?.message || `WhatsApp contestó ${respuesta.status}.`;
+    throw new ErrorDeWhatsApp(mensaje, respuesta.status >= 500 || (codigo !== undefined && REINTENTABLES.has(codigo)), codigo);
+  }
+
   return {
-    async enviarPlantilla(telefono, plantilla, variables) {
-      const cuerpo = {
+    enviarPlantilla: (telefono, plantilla, variables) =>
+      mandar({
         messaging_product: "whatsapp",
         to: `52${telefono}`,
         type: "template",
@@ -59,28 +83,8 @@ export function crearWhatsApp({ token, phoneNumberId, fetchImpl = fetch }: Opcio
           language: { code: IDIOMA },
           components: variables.length ? [{ type: "body", parameters: variables.map((text) => ({ type: "text", text })) }] : [],
         },
-      };
-
-      let respuesta: Response;
-      try {
-        respuesta = await fetchImpl(`${GRAPH}/${phoneNumberId}/messages`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-          body: JSON.stringify(cuerpo),
-          signal: AbortSignal.timeout(15_000),
-        });
-      } catch {
-        throw new ErrorDeWhatsApp("No se pudo conectar con WhatsApp.", true);
-      }
-
-      const datos = (await respuesta.json().catch(() => ({}))) as { messages?: { id?: string }[]; error?: { code?: number; message?: string } };
-      const wamid = datos.messages?.[0]?.id;
-      if (respuesta.ok && wamid) return wamid;
-
-      const codigo = datos.error?.code;
-      const mensaje = (codigo && MENSAJES[codigo]) || datos.error?.message || `WhatsApp contestó ${respuesta.status}.`;
-      throw new ErrorDeWhatsApp(mensaje, respuesta.status >= 500 || (codigo !== undefined && REINTENTABLES.has(codigo)), codigo);
-    },
+      }),
+    enviarTexto: (telefono, texto) => mandar({ messaging_product: "whatsapp", to: `52${telefono}`, type: "text", text: { body: texto } }),
   };
 }
 

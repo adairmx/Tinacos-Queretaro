@@ -9,11 +9,14 @@ import { TIPOS_DE_SERVICIO } from "../shared/precios.ts";
 import { enlaceWhatsApp } from "../shared/telefono.ts";
 import { PROTOCOLOS_VERSION } from "../shared/tipos.ts";
 import { config } from "./config.ts";
+import { responder, type Modelo, type Turno } from "./agente/agente.ts";
+import { anotarMensajeDelCliente, crearAtencion, leTocaAlAgente } from "./agente/atender.ts";
+import { GUION } from "./agente/guion.ts";
 import type { Db } from "./db.ts";
 import { crearFreno } from "./lib/freno.ts";
 import { Rechazo } from "./lib/rechazo.ts";
 import { abrirSesion, canjearAcceso, cerrarSesion, crearAcceso, DIAS_DE_SESION, leerSesion, mismaClave, type Sesion } from "./lib/sesiones.ts";
-import { firmaValida, leerWebhook } from "./lib/whatsapp.ts";
+import { firmaValida, leerWebhook, type WhatsApp } from "./lib/whatsapp.ts";
 import { avisarALaCasa, avisosPendientes, resolverAviso } from "./repos/avisos.ts";
 import { anotarAcuse, recibirMensaje } from "./repos/despacho.ts";
 import { copiarSemana, DIAS_DE_AGENDA, disponibilidadDe, fijarDisponibilidad, horariosConCupo, opcionesParaCliente } from "./repos/disponibilidad.ts";
@@ -101,7 +104,19 @@ declare module "express-serve-static-core" {
   }
 }
 
-export function crearApp(db: Db) {
+export interface Dependencias {
+  /** Para mandar por WhatsApp lo que conteste el agente. */
+  whatsapp?: WhatsApp;
+  /** Quien piensa las respuestas del agente; sin él no hay agente ni simulador. */
+  modelo?: Modelo;
+  /** Si el agente contesta solo los WhatsApp. Por omisión, lo que diga AGENTE_ACTIVO. */
+  agenteActivo?: boolean;
+  esperaMs?: number;
+}
+
+export function crearApp(db: Db, { whatsapp, modelo, agenteActivo = config.agente.activo, esperaMs = config.agente.esperaMs }: Dependencias = {}) {
+  const atender = agenteActivo && modelo && whatsapp ? crearAtencion({ db, modelo, whatsapp }, esperaMs) : undefined;
+
   const app = express();
   app.disable("x-powered-by");
   app.set("trust proxy", 1);
@@ -218,7 +233,14 @@ export function crearApp(db: Db) {
 
     const { mensajes, acuses } = leerWebhook(req.body);
     for (const acuse of acuses) await anotarAcuse(db, acuse);
-    for (const mensaje of mensajes) await recibirMensaje(db, mensaje);
+    for (const mensaje of mensajes) {
+      const loAtiendeElAgente = atender ? await leTocaAlAgente(db, mensaje.telefono) : false;
+      const esNuevo = await recibirMensaje(db, mensaje, { loAtiendeElAgente });
+      if (esNuevo && atender && loAtiendeElAgente) {
+        await anotarMensajeDelCliente(db, mensaje);
+        atender(mensaje.telefono);
+      }
+    }
     res.json({ ok: true });
   });
 
@@ -366,6 +388,17 @@ export function crearApp(db: Db) {
 
   app.get("/api/admin/estado", (_req, res) => {
     res.json({ whatsapp: Boolean(config.whatsapp.token && config.whatsapp.phoneNumberId) });
+  });
+
+  app.get("/api/admin/agente", (_req, res) => {
+    res.json({ configurado: Boolean(modelo), contestaSolo: Boolean(atender), modelo: config.agente.modelo, guion: GUION });
+  });
+
+  /** Simulador: platicar con el agente como si fueras un cliente. Usa los horarios reales, pero no agenda ni avisa a nadie. */
+  app.post("/api/admin/agente/probar", async (req, res) => {
+    if (!modelo) throw new Rechazo("agente_sin_llave", "Falta la llave de Claude (ANTHROPIC_API_KEY) en el servidor para que el agente pueda contestar.", 503);
+    const { mensajes } = z.object({ mensajes: z.array(z.object({ rol: z.enum(["cliente", "agente"]), texto: texto(2000).min(1) })).min(1).max(80) }).parse(req.body);
+    res.json(await responder(modelo, mensajes as Turno[], { db, telefono: "0000000000", simulado: true, alPasarAHumano: async () => undefined }));
   });
 
   app.get("/api/admin/cuentas", async (_req, res) => {

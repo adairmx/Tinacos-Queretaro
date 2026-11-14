@@ -101,8 +101,11 @@ export async function horariosConCupo(q: Consulta, ciudad: string, ahora: Date, 
  * Las dos opciones que se le dan al cliente: el espacio más cercano y el primero de otro día
  * ("hoy a tal hora o mañana a tal hora"). Si sólo hay un día con espacio, los dos primeros de ese día.
  */
-export async function opcionesParaCliente(q: Consulta, ciudad: string, ahora: Date, anticipacionMinutos: number) {
-  const todas = await horariosConCupo(q, ciudad, ahora, anticipacionMinutos);
+export const opcionesParaCliente = async (q: Consulta, ciudad: string, ahora: Date, anticipacionMinutos: number) =>
+  elegirDos(await horariosConCupo(q, ciudad, ahora, anticipacionMinutos));
+
+/** De todos los horarios con lugar, los dos que se ofrecen. */
+export function elegirDos(todas: OpcionDeHorario[]) {
   const primera = todas[0];
   if (!primera) return [];
   const segunda = todas.find((opcion) => opcion.fecha !== primera.fecha) ?? todas[1];

@@ -31,6 +31,18 @@ export const config = {
     verifyToken: process.env.WHATSAPP_VERIFY_TOKEN,
     wabaId: process.env.WHATSAPP_WABA_ID,
   },
+  /**
+   * Agente de mensajes. Necesita ANTHROPIC_API_KEY en el servidor. Con AGENTE_ACTIVO=1 contesta solo los WhatsApp de
+   * quien no tiene una cita en curso; sin eso sólo se puede probar en el simulador del panel.
+   */
+  agente: {
+    configurado: Boolean(process.env.ANTHROPIC_API_KEY),
+    activo: process.env.AGENTE_ACTIVO === "1",
+    modelo: process.env.AGENTE_MODELO || "claude-opus-5-5",
+    esfuerzo: (process.env.AGENTE_ESFUERZO || "low") as "low" | "medium" | "high" | "xhigh" | "max",
+    /** Cuánto se espera a que la persona termine de escribir antes de contestarle. */
+    esperaMs: numero("AGENTE_ESPERA_MS", 4000),
+  },
   /** Secreto que comparte con el sitio público para que sólo él pueda mandar leads a la bandeja. */
   claveDelSitio: process.env.CLAVE_DEL_SITIO,
   /** WhatsApp de 10 dígitos donde la casa recibe sus avisos. Sin él sólo se ven en el panel. */
