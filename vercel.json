@@ -2,16 +2,92 @@
   "buildCommand": "vite build",
   "outputDirectory": "dist/public",
   "framework": "vite",
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.lavadotinacos.com"
+        }
+      ],
+      "destination": "https://lavadotinacos.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/queretaro",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ciudades/queretaro",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ciudades/:city(cdmx|edomex|guadalajara|monterrey|puebla|toluca|cuernavaca|leon|merida|san-luis-potosi|aguascalientes|cancun)",
+      "destination": "/:city",
+      "permanent": true
+    },
+    {
+      "source": "/hacia-donde-se-cierra-una-llave-de-agua",
+      "destination": "/blog/hacia-que-lado-cierra-una-llave-de-agua",
+      "permanent": true
+    },
+    {
+      "source": "/cual-es-la-llave-de-paso-del-tinaco",
+      "destination": "/blog/hacia-que-lado-cierra-una-llave-de-agua",
+      "permanent": true
+    },
+    {
+      "source": "/dispositivos-anti-sarro-para-tinacos-y-cisternas-cual-comprar",
+      "destination": "/blog/dispositivo-antisarro-tipo-ionizador-funciona",
+      "permanent": true
+    },
+    {
+      "source": "/falta-de-presion-de-agua-en-casa",
+      "destination": "/blog/por-que-no-sube-agua-al-tinaco",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
-    { "source": "/api/admin/settings", "destination": "/api/settings" },
-    { "source": "/api/admin/author", "destination": "/api/author" },
-    { "source": "/blog/:slug", "destination": "/api/page?slug=:slug" },
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/(blog|cdmx|edomex|guadalajara|monterrey|puebla|toluca|cuernavaca|leon|merida|san-luis-potosi|aguascalientes|cancun)", "destination": "/index.html" },
-    { "source": "/ciudades/:path*", "destination": "/index.html" },
-    { "source": "/admin/:path*", "destination": "/index.html" },
-    { "source": "/((?!api/).*)", "destination": "/api/page" }
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/api/admin/settings",
+      "destination": "/api/settings"
+    },
+    {
+      "source": "/api/admin/author",
+      "destination": "/api/author"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/api/page?slug=:slug"
+    },
+    {
+      "source": "/:city(cdmx|edomex|guadalajara|monterrey|puebla|toluca|cuernavaca|leon|merida|san-luis-potosi|aguascalientes|cancun)",
+      "destination": "/api/page?city=:city"
+    },
+    {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/api/page"
+    }
   ],
   "headers": [
     {

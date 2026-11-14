@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { useSeo } from "@/hooks/use-seo";
-import { citiesData } from "@/data/citiesData";
+import { citiesData, cityJsonLd } from "@shared/cities";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsAppButton from "@/components/sections/WhatsAppButton";
@@ -24,6 +24,8 @@ import {
 import heroBg from "@assets/generated_images/clean_blue_water_surface_background.webp";
 import heroBgFallback from "@assets/generated_images/clean_blue_water_surface_background.png";
 
+const SCHEMA_ID = "local-seo-schema";
+
 export default function CityPage() {
   const { citySlug } = useParams<{ citySlug: string }>();
   const location = useLocation();
@@ -39,63 +41,20 @@ export default function CityPage() {
     path: `/${slug}`,
   });
 
+  // El servidor ya entrega estos datos estructurados; aquí se crean al llegar navegando dentro del sitio.
   useEffect(() => {
-    if (city) {
-      document.title = city.seoTitle;
-      
-      // Actualizar meta description
-      let metaDesc = document.querySelector('meta[name="description"]');
-      if (!metaDesc) {
-        metaDesc = document.createElement("meta");
-        metaDesc.setAttribute("name", "description");
-        document.head.appendChild(metaDesc);
-      }
-      metaDesc.setAttribute("content", city.seoDescription);
+    if (!city) return;
 
-      // JSON-LD LocalBusiness Schema para SEO Local de Google
-      const scriptId = "local-seo-schema";
-      let script = document.getElementById(scriptId) as HTMLScriptElement | null;
-      if (!script) {
-        script = document.createElement("script");
-        script.id = scriptId;
-        script.type = "application/ld+json";
-        document.head.appendChild(script);
-      }
-      
-      script.text = JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "HomeAndConstructionBusiness",
-        "name": `MonsterCo - Lavado de Tinacos y Cisternas en ${city.name}`,
-        "description": city.seoDescription,
-        "telephone": "+524425016667",
-        "url": window.location.href,
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": city.name,
-          "addressRegion": city.state,
-          "addressCountry": "MX"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": city.geoCoordinates.latitude,
-          "longitude": city.geoCoordinates.longitude
-        },
-        "areaServed": city.zones,
-        "priceRange": "$1,050 - $2,200 MXN",
-        "serviceType": [
-          "Lavado de tinacos",
-          "Lavado de cisternas",
-          "Lavado de aljibes",
-          "Desinfección de depósitos de agua potable"
-        ]
-      });
+    let script = document.getElementById(SCHEMA_ID) as HTMLScriptElement | null;
+    if (!script) {
+      script = document.createElement("script");
+      script.id = SCHEMA_ID;
+      script.type = "application/ld+json";
+      document.head.appendChild(script);
     }
+    script.text = JSON.stringify(cityJsonLd(city));
 
-    return () => {
-      // Limpiar al desmontar
-      const schemaScript = document.getElementById("local-seo-schema");
-      if (schemaScript) schemaScript.remove();
-    };
+    return () => document.getElementById(SCHEMA_ID)?.remove();
   }, [city]);
 
   if (!city) {

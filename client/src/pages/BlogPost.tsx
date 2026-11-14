@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, User, Share2, ArrowLeft, Clock, Tag, MessageCircle, PhoneCall, ShieldCheck, Check } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
+import CitySuggestion from "@/components/CitySuggestion";
 import Footer from "@/components/sections/Footer";
 import NotFound from "@/pages/not-found";
 import { TableOfContents } from "@/components/blog/TableOfContents";
@@ -140,6 +141,8 @@ export default function BlogPost() {
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
       <Navbar />
+
+      <CitySuggestion />
 
       <main className="flex-1 py-20">
         <div className="container mx-auto px-4">

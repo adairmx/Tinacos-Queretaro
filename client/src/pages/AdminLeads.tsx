@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import AdminGate from "@/components/AdminGate";
 import ExperimentResults from "@/components/ExperimentResults";
 import { adminFetch } from "@/lib/adminAuth";
-import { citiesData } from "@/data/citiesData";
+import { citiesData } from "@shared/cities";
 import type { Lead } from "@shared/schema";
 
 function AdminLeadsDashboard() {

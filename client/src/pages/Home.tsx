@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
 import { useSeo } from "@/hooks/use-seo";
-import { getHomeVariant, startHomeTracking } from "@/lib/experiment";
 import Navbar from "@/components/sections/Navbar";
-import Hero from "@/components/sections/Hero";
+import CitySuggestion from "@/components/CitySuggestion";
 import HeroClassic from "@/components/sections/HeroClassic";
 import Services from "@/components/sections/Services";
-import Process from "@/components/sections/Process";
 import ServiceZones from "@/components/sections/ServiceZones";
 import Pricing from "@/components/sections/Pricing";
 import FAQ from "@/components/sections/FAQ";
@@ -16,10 +13,6 @@ import MobileActionFooter from "@/components/sections/MobileActionFooter";
 import Reviews from "@/components/sections/Reviews";
 
 export default function Home() {
-  const [variant] = useState(getHomeVariant);
-
-  useEffect(() => startHomeTracking(), []);
-
   useSeo({
     title: "Lavado de Tinacos y Cisternas en Querétaro y México | MonsterCo",
     description:
@@ -30,11 +23,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background font-sans pb-16 md:pb-0">
       <Navbar />
+      <CitySuggestion currentCity="queretaro" />
       <main>
-        {variant === "classic" ? <HeroClassic /> : <Hero />}
+        <HeroClassic />
         <Reviews />
         <Services />
-        {variant === "quote" && <Process />}
         <ServiceZones />
         <Pricing />
         <FAQ />

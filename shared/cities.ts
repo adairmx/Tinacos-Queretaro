@@ -478,3 +478,63 @@ export const citiesData: Record<string, CitySEOData> = {
     geoCoordinates: { latitude: 21.1619, longitude: -86.8515 },
   }
 };
+
+export const SITE_URL = "https://lavadotinacos.com";
+
+/** Estado de la visita (código ISO 3166-2 sin "MX-") → página que lo atiende. Querétaro es la portada. */
+const CITY_BY_REGION: Record<string, string> = {
+  QUE: "queretaro",
+  CMX: "cdmx",
+  DIF: "cdmx",
+  MEX: "edomex",
+  JAL: "guadalajara",
+  NLE: "monterrey",
+  PUE: "puebla",
+  MOR: "cuernavaca",
+  GUA: "leon",
+  YUC: "merida",
+  SLP: "san-luis-potosi",
+  AGU: "aguascalientes",
+  ROO: "cancun",
+};
+
+const TOLUCA_AREA = /toluca|metepec|zinacantepec|lerma/i;
+
+/** Página que corresponde a una visita según su país, estado y ciudad; undefined si no la atendemos. */
+export function cityForLocation(country?: string, region?: string, cityName?: string): string | undefined {
+  if (country?.toUpperCase() !== "MX" || !region) return undefined;
+  const slug = CITY_BY_REGION[region.toUpperCase()];
+  return slug === "edomex" && cityName && TOLUCA_AREA.test(cityName) ? "toluca" : slug;
+}
+
+/** Datos estructurados de negocio local de una ciudad, iguales en el servidor y en el navegador. */
+export function cityJsonLd(city: CitySEOData) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HomeAndConstructionBusiness",
+    name: `MonsterCo - Lavado de Tinacos y Cisternas en ${city.name}`,
+    description: city.seoDescription,
+    telephone: "+524425016667",
+    url: `${SITE_URL}/${city.slug}`,
+    image: `${SITE_URL}/opengraph.jpg`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: city.name,
+      addressRegion: city.state,
+      addressCountry: "MX",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: city.geoCoordinates.latitude,
+      longitude: city.geoCoordinates.longitude,
+    },
+    areaServed: city.zones,
+    priceRange: "$1,050 - $2,200 MXN",
+    serviceType: [
+      "Lavado de tinacos",
+      "Lavado de cisternas",
+      "Lavado de aljibes",
+      "Desinfección de depósitos de agua potable",
+    ],
+  };
+}

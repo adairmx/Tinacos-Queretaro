@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapPin, ChevronDown } from "lucide-react";
-import { citiesData } from "@/data/citiesData";
+import { citiesData } from "@shared/cities";
 
 interface CitySelectorProps {
   className?: string;

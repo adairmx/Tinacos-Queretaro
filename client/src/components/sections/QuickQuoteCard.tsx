@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { citiesData } from "@/data/citiesData";
+import { citiesData } from "@shared/cities";
 import { trackExperiment } from "@/lib/experiment";
 import { Calculator, CheckCircle2, MessageCircle, Sparkles, MapPin } from "lucide-react";
 
