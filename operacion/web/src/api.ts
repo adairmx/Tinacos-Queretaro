@@ -1,6 +1,6 @@
 import type {
   Aviso, DatosDeProveedor, DatosDeServicio, Espacio, EventoDeServicio, EstadoDeProveedor, ModoDeLiquidacion, OpcionDeHorario,
-  Proveedor, Saldo, Servicio,
+  Prospecto, Proveedor, Saldo, Servicio,
 } from "../../shared/tipos.ts";
 
 /** Lo que el servidor contestó cuando dijo que no: un código estable y un texto para mostrarle a la persona. */
@@ -77,6 +77,10 @@ export const api = {
   confirmarLiquidacion: (id: number) => pedir<Servicio>("POST", `/admin/servicios/${id}/liquidacion`),
   avisos: () => pedir<AvisoConEnlace[]>("GET", "/admin/avisos"),
   resolverAviso: (id: number, estado: "enviado" | "descartado") => pedir<{ ok: true }>("POST", `/admin/avisos/${id}`, { estado }),
+  prospectos: () => pedir<Prospecto[]>("GET", "/admin/prospectos"),
+  prospecto: (id: number) => pedir<Prospecto>("GET", `/admin/prospectos/${id}`),
+  marcarProspecto: (id: number, estado: "nuevo" | "contactado" | "descartado", motivo?: string) =>
+    pedir<Prospecto>("POST", `/admin/prospectos/${id}`, { estado, motivo: motivo || null }),
   cuentas: () => pedir<Saldo[]>("GET", "/admin/cuentas"),
   estado: () => pedir<{ whatsapp: boolean }>("GET", "/admin/estado"),
 };

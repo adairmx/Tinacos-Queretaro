@@ -1,20 +1,26 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { api, ErrorDeApi } from "../api.ts";
 import { BLOQUES, etiquetaDeBloque } from "../../../shared/bloques.ts";
 import { CIUDADES, ciudadPorSlug } from "../../../shared/ciudades.ts";
 import { ahoraEn, fechaCorta } from "../../../shared/fechas.ts";
 import { NOMBRE_DE_TIPO, PRECIO_BASE, TIPOS_DE_SERVICIO, type TipoDeServicio } from "../../../shared/precios.ts";
 import { normalizarTelefono } from "../../../shared/telefono.ts";
-import type { OpcionDeHorario, Servicio } from "../../../shared/tipos.ts";
+import type { OpcionDeHorario, Prospecto, Servicio } from "../../../shared/tipos.ts";
 import { Boton, Campo, CLASE_DE_ENTRADA, Cargando, Entrada, Mensaje, Tarjeta, useAccion, useDatos } from "../ui.tsx";
 import { nombreDeCiudad } from "./comunes.tsx";
 
-export function Agendar() {
-  const [ciudad, setCiudad] = useState("queretaro");
-  // Cambiar `version` vuelve a montar el formulario: horarios frescos y datos del cliente en blanco.
-  const [version, setVersion] = useState(0);
+/** Agenda una cita. Con `?prospecto=7` llega desde la bandeja de leads con los datos de esa persona ya puestos. */
+export function Agendar({ alAgendar }: { alAgendar?: () => void }) {
+  const [parametros, setParametros] = useSearchParams();
+  const prospectoId = Number(parametros.get("prospecto")) || undefined;
   const [agendado, setAgendado] = useState<Servicio>();
+
+  const terminar = (servicio: Servicio) => {
+    setAgendado(servicio);
+    setParametros({}, { replace: true });
+    alAgendar?.();
+  };
 
   return (
     <div className="space-y-4">
@@ -27,6 +33,40 @@ export function Agendar() {
           </Link>
         </Mensaje>
       )}
+      {prospectoId ? (
+        <AgendaDeProspecto key={prospectoId} id={prospectoId} alAgendar={terminar} alCancelar={() => setParametros({}, { replace: true })} />
+      ) : (
+        <Agenda alAgendar={terminar} alCambiarCiudad={() => setAgendado(undefined)} />
+      )}
+    </div>
+  );
+}
+
+function AgendaDeProspecto({ id, alAgendar, alCancelar }: { id: number; alAgendar: (servicio: Servicio) => void; alCancelar: () => void }) {
+  const { datos, error } = useDatos(() => api.prospecto(id));
+  if (error) return <Mensaje>{error}</Mensaje>;
+  if (!datos) return <Cargando />;
+
+  return (
+    <>
+      <Mensaje tipo="nota">
+        Agendando el lead de <strong>{datos.nombre}</strong>.{" "}
+        <button type="button" className="font-semibold underline" onClick={alCancelar}>
+          Agendar a otra persona
+        </button>
+      </Mensaje>
+      <Agenda prospecto={datos} alAgendar={alAgendar} />
+    </>
+  );
+}
+
+function Agenda({ prospecto, alAgendar, alCambiarCiudad }: { prospecto?: Prospecto; alAgendar: (servicio: Servicio) => void; alCambiarCiudad?: () => void }) {
+  const [ciudad, setCiudad] = useState(prospecto?.ciudad ?? "queretaro");
+  // Cambiar `version` vuelve a montar el formulario: horarios frescos y datos del cliente en blanco.
+  const [version, setVersion] = useState(0);
+
+  return (
+    <>
       <Tarjeta>
         <Campo etiqueta="Ciudad">
           <select
@@ -34,7 +74,7 @@ export function Agendar() {
             value={ciudad}
             onChange={(e) => {
               setCiudad(e.target.value);
-              setAgendado(undefined);
+              alCambiarCiudad?.();
             }}
           >
             {CIUDADES.map((c) => (
@@ -48,19 +88,20 @@ export function Agendar() {
       <FormularioDeCita
         key={`${ciudad}-${version}`}
         ciudad={ciudad}
+        prospecto={prospecto}
         alAgendar={(servicio) => {
-          setAgendado(servicio);
           setVersion((v) => v + 1);
+          alAgendar(servicio);
         }}
       />
-    </div>
+    </>
   );
 }
 
 const mismoHorario = (a: { fecha: string; bloque: string }, b: { fecha: string; bloque: string } | undefined) =>
   !!b && a.fecha === b.fecha && a.bloque === b.bloque;
 
-function FormularioDeCita({ ciudad, alAgendar }: { ciudad: string; alAgendar: (servicio: Servicio) => void }) {
+function FormularioDeCita({ ciudad, prospecto, alAgendar }: { ciudad: string; prospecto?: Prospecto; alAgendar: (servicio: Servicio) => void }) {
   const { datos, error, recargar } = useDatos(() => api.horarios(ciudad));
   const accion = useAccion();
   const hoy = ahoraEn(ciudadPorSlug(ciudad)?.zona ?? "America/Mexico_City").fecha;
@@ -70,14 +111,14 @@ function FormularioDeCita({ ciudad, alAgendar }: { ciudad: string; alAgendar: (s
   const [fechaManual, setFechaManual] = useState(hoy);
   const [bloqueManual, setBloqueManual] = useState(BLOQUES[0]?.id ?? "");
 
-  const [nombre, setNombre] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [colonia, setColonia] = useState("");
+  const [nombre, setNombre] = useState(prospecto?.nombre ?? "");
+  const [telefono, setTelefono] = useState(prospecto?.telefono ?? "");
+  const [colonia, setColonia] = useState(prospecto?.colonia ?? "");
   const [direccion, setDireccion] = useState("");
-  const [tipo, setTipo] = useState<TipoDeServicio>("tinaco");
-  const [litros, setLitros] = useState("");
-  const [precio, setPrecio] = useState(String(PRECIO_BASE.tinaco));
-  const [notas, setNotas] = useState("");
+  const [tipo, setTipo] = useState<TipoDeServicio>(prospecto?.tipo ?? "tinaco");
+  const [litros, setLitros] = useState(prospecto?.litros ? String(prospecto.litros) : "");
+  const [precio, setPrecio] = useState(String(PRECIO_BASE[prospecto?.tipo ?? "tinaco"]));
+  const [notas, setNotas] = useState(prospecto?.notas ?? "");
   const [problema, setProblema] = useState<string>();
 
   if (error) return <Mensaje>{error}</Mensaje>;
@@ -118,7 +159,8 @@ function FormularioDeCita({ ciudad, alAgendar }: { ciudad: string; alAgendar: (s
           fecha: horario.fecha,
           bloque: horario.bloque,
           notas: notas.trim() || null,
-          origen: "admin",
+          origen: prospecto?.origen ?? "admin",
+          ...(prospecto ? { prospecto_id: prospecto.id } : {}),
           ...(forzar ? { forzar: true } : {}),
         });
       } catch (fallo) {

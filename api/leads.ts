@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { desc } from "drizzle-orm";
 import { db } from "./_lib/db.js";
 import { requireAdmin } from "./_lib/auth.js";
+import { reenviarAOperacion } from "./_lib/operacion.js";
 import { leads, insertLeadSchema } from "../shared/schema.js";
 
 export default async function handler(
@@ -69,6 +70,7 @@ export default async function handler(
 
       const validated = insertLeadSchema.parse(leadData);
       const [newLead] = await db.insert(leads).values(validated).returning();
+      await reenviarAOperacion(newLead);
 
       return response.status(201).json({
         success: true,

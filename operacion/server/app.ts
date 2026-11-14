@@ -17,6 +17,7 @@ import { firmaValida, leerWebhook } from "./lib/whatsapp.ts";
 import { avisarALaCasa, avisosPendientes, resolverAviso } from "./repos/avisos.ts";
 import { anotarAcuse, recibirMensaje } from "./repos/despacho.ts";
 import { copiarSemana, DIAS_DE_AGENDA, disponibilidadDe, fijarDisponibilidad, horariosConCupo, opcionesParaCliente } from "./repos/disponibilidad.ts";
+import { listarProspectos, marcarProspecto, obtenerProspecto, recibirProspecto } from "./repos/prospectos.ts";
 import { aceptarProtocolos, actualizarProveedor, crearProveedor, listarProveedores, obtenerProveedor } from "./repos/proveedores.ts";
 import {
   agendarServicio, cancelarServicio, confirmarLiquidacion, eventosDe, listarServicios, marcarEnCamino, marcarRealizado, obtenerServicio,
@@ -60,6 +61,20 @@ const datosDeServicio = z.object({
   bloque,
   notas: opcional(1000),
   forzar: z.boolean().optional(),
+  origen: texto(40).optional(),
+  prospecto_id: z.number().int().positive().optional(),
+});
+
+// Los leads llegan de formularios hechos por otros: se acepta texto libre y se interpreta al guardar.
+const datosDeProspecto = z.object({
+  nombre: opcional(200),
+  telefono: texto(40),
+  ciudad: opcional(80),
+  colonia: opcional(200),
+  tipo: opcional(80),
+  litros: z.number().nullish(),
+  notas: opcional(2000),
+  origen: opcional(40),
 });
 
 const idDe = (req: Request) => {
@@ -173,6 +188,18 @@ export function crearApp(db: Db) {
       { proveedorId: proveedor.id },
     );
     res.status(201).json({ ok: true });
+  });
+
+  // ── Leads que manda el sitio público ────────────────────────────────────────────────────────────
+
+  app.post("/api/prospectos", async (req, res) => {
+    const clave = config.claveDelSitio;
+    if (!clave || !mismaClave(req.header("x-clave-del-sitio") ?? "", clave)) throw new Rechazo("sin_permiso", "Falta la clave del sitio.", 401);
+    const datos = datosDeProspecto.parse(req.body);
+    // Para comprobar la conexión entre el sitio y la plataforma sin dejar un lead de mentiras.
+    if (req.header("x-solo-probar")) return void res.json({ ok: true, prueba: true });
+    const { prospecto, repetido } = await recibirProspecto(db, datos);
+    res.status(repetido ? 200 : 201).json({ ok: true, id: prospecto.id, repetido });
   });
 
   // ── WhatsApp: Meta avisa aquí de entregas y de lo que la gente contesta ─────────────────────────
@@ -320,6 +347,21 @@ export function crearApp(db: Db) {
     const { estado } = z.object({ estado: z.enum(["enviado", "descartado"]) }).parse(req.body);
     if (!(await resolverAviso(db, idDe(req), estado))) throw new Rechazo("no_existe", "Ese aviso ya no está pendiente.", 404);
     res.json({ ok: true });
+  });
+
+  app.get("/api/admin/prospectos", async (_req, res) => {
+    res.json(await listarProspectos(db));
+  });
+
+  app.get("/api/admin/prospectos/:id", async (req, res) => {
+    const prospecto = await obtenerProspecto(db, idDe(req));
+    if (!prospecto) throw new Rechazo("no_existe", "Ese lead no existe.", 404);
+    res.json(prospecto);
+  });
+
+  app.post("/api/admin/prospectos/:id", async (req, res) => {
+    const { estado, motivo } = z.object({ estado: z.enum(["nuevo", "contactado", "descartado"]), motivo: opcional(300) }).parse(req.body);
+    res.json(await marcarProspecto(db, idDe(req), estado, motivo));
   });
 
   app.get("/api/admin/estado", (_req, res) => {

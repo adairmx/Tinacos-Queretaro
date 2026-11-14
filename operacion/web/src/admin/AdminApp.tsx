@@ -5,16 +5,20 @@ import { Boton, useDatos } from "../ui.tsx";
 import { Agendar } from "./Agendar.tsx";
 import { Avisos } from "./Avisos.tsx";
 import { Cuentas } from "./Cuentas.tsx";
+import { Prospectos } from "./Prospectos.tsx";
 import { Proveedores } from "./Proveedores.tsx";
 import { Servicios } from "./Servicios.tsx";
 
 export default function AdminApp() {
   const { salir } = useSesion();
   const avisos = useDatos(api.avisos, 20);
-  const pendientes = avisos.datos?.filter((aviso) => aviso.estado === "pendiente").length ?? 0;
+  const pendientes = avisos.datos?.length ?? 0;
+  const prospectos = useDatos(api.prospectos, 30);
+  const leadsNuevos = prospectos.datos?.filter((prospecto) => prospecto.estado === "nuevo").length ?? 0;
 
   const pestanas = [
     { a: "/admin", texto: "Agendar" },
+    { a: "/admin/leads", texto: "Leads", burbuja: leadsNuevos },
     { a: "/admin/servicios", texto: "Servicios" },
     { a: "/admin/avisos", texto: "Avisos", burbuja: pendientes },
     { a: "/admin/proveedores", texto: "Proveedores" },
@@ -48,7 +52,8 @@ export default function AdminApp() {
       </header>
       <main className="mx-auto max-w-[1100px] px-4 py-5">
         <Routes>
-          <Route index element={<Agendar />} />
+          <Route index element={<Agendar alAgendar={prospectos.recargar} />} />
+          <Route path="leads" element={<Prospectos {...prospectos} />} />
           <Route path="servicios" element={<Servicios />} />
           <Route path="avisos" element={<Avisos {...avisos} />} />
           <Route path="proveedores" element={<Proveedores />} />

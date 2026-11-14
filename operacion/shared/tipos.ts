@@ -52,6 +52,28 @@ export interface Servicio {
   creado_en: string;
 }
 
+export type EstadoDeProspecto = "nuevo" | "contactado" | "agendado" | "descartado";
+
+/** Un lead: alguien que pidió informes y todavía no tiene cita. */
+export interface Prospecto {
+  id: number;
+  nombre: string;
+  telefono: string;
+  /** false: no se reconoció como teléfono de 10 dígitos; hay que revisarlo a mano. */
+  telefono_valido: boolean;
+  ciudad: string | null;
+  colonia: string | null;
+  tipo: TipoDeServicio;
+  litros: number | null;
+  notas: string | null;
+  origen: string;
+  estado: EstadoDeProspecto;
+  motivo_descarte: string | null;
+  servicio_id: number | null;
+  creado_en: string;
+  actualizado_en: string;
+}
+
 export interface Espacio {
   fecha: string;
   bloque: string;
@@ -111,6 +133,8 @@ export interface DatosDeServicio {
   bloque: string;
   notas?: string | null;
   origen?: string;
+  /** El lead del que sale esta cita, si viene de la bandeja. */
+  prospecto_id?: number;
 }
 
 export interface DatosDeProveedor {

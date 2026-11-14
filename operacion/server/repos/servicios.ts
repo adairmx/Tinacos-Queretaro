@@ -10,6 +10,7 @@ import { Rechazo } from "../lib/rechazo.ts";
 import { iso } from "../lib/sql.ts";
 import { avisar, avisarALaCasa, descartarOfertas } from "./avisos.ts";
 import { cupoDe, validarEspacio } from "./disponibilidad.ts";
+import { ligarAServicio } from "./prospectos.ts";
 
 const COLUMNAS = `s.id, s.cliente_nombre, s.cliente_telefono, s.ciudad, s.colonia, s.direccion, s.tipo, s.litros, s.precio,
   s.fecha::text AS fecha, s.bloque, s.estado, s.proveedor_id, p.nombre AS proveedor_nombre,
@@ -90,6 +91,7 @@ export async function agendarServicio(db: Db, datos: DatosDeServicio, opciones: 
         precio, datos.fecha, datos.bloque, datos.origen ?? "panel", datos.notas?.trim() || null],
     );
     const servicio = (await obtenerServicio(tx, nuevo!.id))!;
+    if (datos.prospecto_id) await ligarAServicio(tx, datos.prospecto_id, servicio.id);
     const avisados = await ofrecer(tx, servicio);
     await anotar(tx, servicio.id, "agendado", opciones.actor ?? "sistema", `Se avisó a ${avisados} proveedor(es)${opciones.forzar ? "; agendado sin revisar cupo" : ""}`);
     return servicio;

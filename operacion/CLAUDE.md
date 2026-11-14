@@ -56,10 +56,23 @@ toma un servicio en 30 minutos se le avisa a Adair.
 - `npm run plantillas` imprime las plantillas que hay que tener aprobadas en Meta; con `-- --registrar` intenta
   darlas de alta por la API (sin probar).
 - Bitácora por servicio (`servicio_eventos`) que no se edita.
+- Bandeja de leads (`prospectos`, pestaña «Leads»): el sitio manda cada lead de su formulario a `POST /api/prospectos`
+  con el secreto `CLAVE_DEL_SITIO` (en el sitio: `OPERACION_URL` y `OPERACION_CLAVE`, en `api/_lib/operacion.ts`). Un lead
+  repetido en 7 días se junta con el abierto; «Agendar cita» abre la agenda con sus datos y deja el lead ligado al
+  servicio. El encabezado `X-Solo-Probar` comprueba la conexión sin guardar nada.
 - Avisos por reloj (`server/repos/programados.ts`, los genera el vigía cada minuto, cada uno una sola vez):
   confirmación al cliente la víspera a las 7 p.m., otra el día del servicio a las 7 a.m., y recordatorio a los 180
   días de un servicio terminado (de 10 a 18 h, sólo si el cliente no ha vuelto). Si la víspera nadie ha tomado el
   servicio, no se le confirma al cliente: se le avisa a la casa.
+
+## Dónde está publicado
+
+Railway, proyecto `lavadotinacos-operacion` (servicio `operacion` + `Postgres`), desde el 14 nov 2026:
+<https://operacion-production-cbe2ae1e.up.railway.app>. Despliega solo con cada push a `main` de
+`adairmx/Tinacos-Queretaro` que toque `operacion/**` (carpeta raíz `/operacion`, `npm run build`, `npm start`, salud en
+`/api/salud`). El mismo push también vuelve a publicar el sitio en Vercel. Variables puestas: `DATABASE_URL`,
+`NODE_ENV`, `URL_PUBLICA`, `CLAVE_DEL_SITIO`, `NPM_CONFIG_INCLUDE=dev` (sin ella no se instalan las herramientas de compilación).
+`ADMIN_PASSWORD` y las de WhatsApp las pone Adair en Railway; sin `ADMIN_PASSWORD` nadie entra a administración.
 
 ## Lo que sigue, en orden
 
@@ -71,7 +84,7 @@ toma un servicio en 30 minutos se le avisa a Adair.
 4. Agente de voz entrante y luego saliente (Twilio + los motores que ya usa Justicia: Phonic, PolyAI, Deepgram).
 5. Publicarlo (Railway, con Postgres, desde esta carpeta). Falta decidir la dirección de los portales (por ejemplo
    un subdominio de lavadotinacos.com) y qué pasa con el número 442 501 6667.
-6. Que el sitio mande sus leads aquí, para que formulario, mensajes y llamadas caigan en el mismo lugar.
+6. ~~Que el sitio mande sus leads aquí~~ (hecho el 14 nov 2026). Faltan los que lleguen por mensajes y llamadas.
 
 ## Técnica
 

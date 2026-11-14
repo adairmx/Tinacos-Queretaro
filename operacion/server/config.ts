@@ -31,6 +31,8 @@ export const config = {
     verifyToken: process.env.WHATSAPP_VERIFY_TOKEN,
     wabaId: process.env.WHATSAPP_WABA_ID,
   },
+  /** Secreto que comparte con el sitio público para que sólo él pueda mandar leads a la bandeja. */
+  claveDelSitio: process.env.CLAVE_DEL_SITIO,
   /** WhatsApp de 10 dígitos donde la casa recibe sus avisos. Sin él sólo se ven en el panel. */
   adminWhatsapp: normalizarTelefono(process.env.ADMIN_WHATSAPP ?? ""),
 };
