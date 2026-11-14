@@ -2,6 +2,7 @@ import type { Db } from "../db.ts";
 import type { NombreDePlantilla } from "../lib/plantillas.ts";
 import { ErrorDeWhatsApp, type Acuse, type MensajeEntrante, type WhatsApp } from "../lib/whatsapp.ts";
 import { avisarALaCasa } from "./avisos.ts";
+import { guardarProspecto } from "./prospectos.ts";
 
 /** Después de estos intentos el aviso queda como fallido y se manda a mano desde el panel. */
 export const INTENTOS_MAXIMOS = 5;
@@ -60,14 +61,15 @@ export async function anotarAcuse(db: Db, acuse: Acuse) {
 
 /**
  * Guarda lo que alguien escribió por WhatsApp y se lo hace saber a la casa. Mientras no haya un agente que
- * conteste, la respuesta de un cliente a su confirmación no se puede quedar sin que nadie la vea.
+ * conteste, la respuesta de un cliente a su confirmación no se puede quedar sin que nadie la vea. Quien escribe
+ * sin tener una cita en curso (alguien nuevo, o un cliente que vuelve) entra a la bandeja de leads.
  * Regresa false si ese mensaje ya se había recibido.
  */
 export async function recibirMensaje(db: Db, mensaje: MensajeEntrante) {
   return db.transaccion(async (tx) => {
     const [proveedor] = await tx.query<{ id: number; nombre: string }>("SELECT id, nombre FROM proveedores WHERE telefono = $1", [mensaje.telefono]);
     const [servicio] = await tx.query<{ id: number; cliente_nombre: string }>(
-      "SELECT id, cliente_nombre FROM servicios WHERE cliente_telefono = $1 ORDER BY (estado IN ('agendado', 'tomado', 'en_camino')) DESC, id DESC LIMIT 1",
+      "SELECT id, cliente_nombre FROM servicios WHERE cliente_telefono = $1 AND estado IN ('agendado', 'tomado', 'en_camino') ORDER BY id DESC LIMIT 1",
       [mensaje.telefono],
     );
 
@@ -77,11 +79,17 @@ export async function recibirMensaje(db: Db, mensaje: MensajeEntrante) {
     );
     if (nuevos.length === 0) return false;
 
-    const quien = proveedor
-      ? `El proveedor ${proveedor.nombre}`
-      : servicio
-        ? `${servicio.cliente_nombre} (servicio #${servicio.id})`
-        : `${mensaje.nombre ?? "Alguien"} (${mensaje.telefono}, sin servicio registrado)`;
+    let quien: string;
+    if (proveedor) {
+      quien = `El proveedor ${proveedor.nombre}`;
+    } else if (servicio) {
+      quien = `${servicio.cliente_nombre} (servicio #${servicio.id})`;
+    } else {
+      const { prospecto, repetido } = await guardarProspecto(tx, { nombre: mensaje.nombre, telefono: mensaje.telefono, notas: mensaje.texto, origen: "whatsapp" });
+      // Un lead nuevo ya trae su propio aviso; si esa persona vuelve a escribir, la casa también se entera.
+      if (!repetido) return true;
+      quien = `${prospecto.nombre} (lead #${prospecto.id})`;
+    }
     await avisarALaCasa(tx, "mensaje_entrante", `${quien} escribió por WhatsApp: «${mensaje.texto.slice(0, 500)}»`, {
       servicioId: proveedor ? null : servicio?.id,
       proveedorId: proveedor?.id,

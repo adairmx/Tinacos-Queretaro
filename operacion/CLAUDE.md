@@ -69,7 +69,7 @@ toma un servicio en 30 minutos se le avisa a Adair.
 
 Railway, proyecto `lavadotinacos-operacion` (servicio `operacion` + `Postgres`), desde el 14 nov 2026:
 <https://operacion-production-cbe2ae1e.up.railway.app>. Despliega solo con cada push a `main` de
-`adairmx/Tinacos-Queretaro` que toque `operacion/**` (carpeta raíz `/operacion`, `npm run build`, `npm start`, salud en
+`adairmx/Tinacos-Queretaro` que toque esta carpeta (patrón de vigilancia `/operacion/**`, con la diagonal al inicio: sin ella Railway no despliega) (carpeta raíz `/operacion`, `npm run build`, `npm start`, salud en
 `/api/salud`). El mismo push también vuelve a publicar el sitio en Vercel. Variables puestas: `DATABASE_URL`,
 `NODE_ENV`, `URL_PUBLICA`, `CLAVE_DEL_SITIO`, `NPM_CONFIG_INCLUDE=dev` (sin ella no se instalan las herramientas de compilación).
 `ADMIN_PASSWORD` y las de WhatsApp las pone Adair en Railway; sin `ADMIN_PASSWORD` nadie entra a administración.
@@ -84,7 +84,7 @@ Railway, proyecto `lavadotinacos-operacion` (servicio `operacion` + `Postgres`),
 4. Agente de voz entrante y luego saliente (Twilio + los motores que ya usa Justicia: Phonic, PolyAI, Deepgram).
 5. Publicarlo (Railway, con Postgres, desde esta carpeta). Falta decidir la dirección de los portales (por ejemplo
    un subdominio de lavadotinacos.com) y qué pasa con el número 442 501 6667.
-6. ~~Que el sitio mande sus leads aquí~~ (hecho el 14 nov 2026). Faltan los que lleguen por mensajes y llamadas.
+6. ~~Que el sitio mande sus leads aquí~~ (hecho el 14 nov 2026). Quien escribe por WhatsApp sin cita en curso también entra a la bandeja. Faltan Messenger y las llamadas.
 
 ## Técnica
 

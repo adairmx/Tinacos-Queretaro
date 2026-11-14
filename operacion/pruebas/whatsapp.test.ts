@@ -243,3 +243,31 @@ test("el webhook sólo acepta lo que firma Meta, anota entregas y guarda lo que 
   assert.equal(fallido?.estado, "fallido");
   assert.match(fallido!.error!, /no tiene WhatsApp/);
 });
+
+test("quien escribe por WhatsApp sin tener cita en curso entra a la bandeja de leads", async () => {
+  const prospectos = await import("../server/repos/prospectos.ts");
+  const escribe = (wamid: string, texto: string, telefono = "5598765432") => m.despacho.recibirMensaje(db, { wamid, telefono, nombre: "Marta", texto });
+
+  // Alguien nuevo: se vuelve lead y la casa recibe el aviso de lead nuevo.
+  assert.equal(await escribe("wamid.a", "Hola, ¿cuánto cuesta lavar una cisterna?"), true);
+  let [lead] = await prospectos.listarProspectos(db);
+  assert.deepEqual([lead?.nombre, lead?.telefono, lead?.origen, lead?.estado], ["Marta", "5598765432", "whatsapp", "nuevo"]);
+  assert.deepEqual((await m.avisos.avisosPendientes(db)).map((a) => a.motivo), ["lead_nuevo"]);
+
+  // Vuelve a escribir: mismo lead, con lo nuevo, y la casa también se entera.
+  assert.equal(await escribe("wamid.b", "¿Siguen ahí?"), true);
+  assert.equal(await escribe("wamid.b", "¿Siguen ahí?"), false);
+  const leads = await prospectos.listarProspectos(db);
+  assert.equal(leads.length, 1);
+  assert.deepEqual(leads[0]!.notas!.split("\n"), ["Hola, ¿cuánto cuesta lavar una cisterna?", "— Volvió a escribir —", "¿Siguen ahí?"]);
+  const avisos = await m.avisos.avisosPendientes(db);
+  assert.equal(avisos.at(-1)?.texto, `Marta (lead #${leads[0]!.id}) escribió por WhatsApp: «¿Siguen ahí?»`);
+
+  // Un cliente cuyo servicio ya terminó y vuelve a escribir (por ejemplo, al recordatorio de seis meses) también es lead.
+  const { servicio, proveedor } = await servicioAgendado();
+  await m.servicios.tomarServicio(db, servicio.id, proveedor.id);
+  await m.servicios.marcarRealizado(db, servicio.id, proveedor.id);
+  await m.despacho.recibirMensaje(db, { wamid: "wamid.c", telefono: "4421234567", nombre: "Laura", texto: "Sí, agéndenme otra vez" });
+  [lead] = (await prospectos.listarProspectos(db)).filter((p) => p.telefono === "4421234567");
+  assert.deepEqual([lead?.origen, lead?.notas], ["whatsapp", "Sí, agéndenme otra vez"]);
+});

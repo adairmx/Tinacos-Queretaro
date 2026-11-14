@@ -54,7 +54,10 @@ export const listarProspectos = (q: Consulta) =>
   q.query<Prospecto>(`SELECT ${COLUMNAS} FROM prospectos ORDER BY (estado = 'nuevo') DESC, (estado = 'contactado') DESC, creado_en DESC LIMIT 300`);
 
 /** Guarda un lead y le avisa a la casa. Si esa persona ya tenía uno abierto, le suma lo nuevo en vez de duplicarlo. */
-export async function recibirProspecto(db: Db, datos: DatosDeProspecto) {
+export const recibirProspecto = (db: Db, datos: DatosDeProspecto) => db.transaccion((tx) => guardarProspecto(tx, datos));
+
+/** Lo mismo, dentro de una transacción que ya está abierta. */
+export async function guardarProspecto(tx: Consulta, datos: DatosDeProspecto) {
   const crudo = (datos.telefono ?? "").trim();
   const diez = normalizarTelefono(crudo);
   if (!diez && crudo.replace(/\D/g, "").length < 7) throw new Rechazo("telefono_invalido", "Sin un teléfono no se puede atender el lead.", 400);
@@ -66,35 +69,33 @@ export async function recibirProspecto(db: Db, datos: DatosDeProspecto) {
   const notas = datos.notas?.trim() || null;
   const origen = datos.origen?.trim() || "web";
 
-  return db.transaccion(async (tx) => {
-    const [abierto] = await tx.query<{ id: number; notas: string | null }>(
-      `SELECT id, notas FROM prospectos
-        WHERE telefono = $1 AND estado IN ('nuevo', 'contactado') AND creado_en > now() - make_interval(days => $2)
-        ORDER BY id DESC LIMIT 1`,
-      [telefono, DIAS_PARA_JUNTAR],
+  const [abierto] = await tx.query<{ id: number; notas: string | null }>(
+    `SELECT id, notas FROM prospectos
+      WHERE telefono = $1 AND estado IN ('nuevo', 'contactado') AND creado_en > now() - make_interval(days => $2)
+      ORDER BY id DESC LIMIT 1`,
+    [telefono, DIAS_PARA_JUNTAR],
+  );
+  if (abierto) {
+    const juntas = [abierto.notas, notas].filter(Boolean).join("\n— Volvió a escribir —\n") || null;
+    await tx.query(
+      "UPDATE prospectos SET notas = $2, ciudad = COALESCE(ciudad, $3), colonia = COALESCE(colonia, $4), actualizado_en = now() WHERE id = $1",
+      [abierto.id, juntas, ciudad, datos.colonia?.trim() || null],
     );
-    if (abierto) {
-      const juntas = [abierto.notas, notas].filter(Boolean).join("\n— Volvió a escribir —\n") || null;
-      await tx.query(
-        "UPDATE prospectos SET notas = $2, ciudad = COALESCE(ciudad, $3), colonia = COALESCE(colonia, $4), actualizado_en = now() WHERE id = $1",
-        [abierto.id, juntas, ciudad, datos.colonia?.trim() || null],
-      );
-      return { prospecto: (await obtenerProspecto(tx, abierto.id))!, repetido: true };
-    }
+    return { prospecto: (await obtenerProspecto(tx, abierto.id))!, repetido: true };
+  }
 
-    const [nuevo] = await tx.query<{ id: number }>(
-      `INSERT INTO prospectos (nombre, telefono, telefono_valido, ciudad, colonia, tipo, litros, notas, origen)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-      [nombre, telefono, Boolean(diez), ciudad, datos.colonia?.trim() || null, tipo, Number.isInteger(datos.litros) && datos.litros! > 0 ? datos.litros : null, notas, origen],
-    );
-    const donde = ciudad ? ` de ${ciudadPorSlug(ciudad)!.nombre}` : "";
-    await avisarALaCasa(
-      tx,
-      "lead_nuevo",
-      `Lead nuevo${donde}: ${nombre}, ${diez ? telefonoBonito(diez) : telefono}. ${NOMBRE_DE_TIPO[tipo]}.${notas ? ` Dice: «${notas.slice(0, 300)}»` : ""}`,
-    );
-    return { prospecto: (await obtenerProspecto(tx, nuevo!.id))!, repetido: false };
-  });
+  const [nuevo] = await tx.query<{ id: number }>(
+    `INSERT INTO prospectos (nombre, telefono, telefono_valido, ciudad, colonia, tipo, litros, notas, origen)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+    [nombre, telefono, Boolean(diez), ciudad, datos.colonia?.trim() || null, tipo, Number.isInteger(datos.litros) && datos.litros! > 0 ? datos.litros : null, notas, origen],
+  );
+  const donde = ciudad ? ` de ${ciudadPorSlug(ciudad)!.nombre}` : "";
+  await avisarALaCasa(
+    tx,
+    "lead_nuevo",
+    `Lead nuevo${donde}: ${nombre}, ${diez ? telefonoBonito(diez) : telefono}. ${NOMBRE_DE_TIPO[tipo]}.${notas ? ` Dice: «${notas.slice(0, 300)}»` : ""}`,
+  );
+  return { prospecto: (await obtenerProspecto(tx, nuevo!.id))!, repetido: false };
 }
 
 /** La casa marca qué pasó con un lead que no terminó en cita, o lo regresa a nuevo. */
