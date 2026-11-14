@@ -1,0 +1,43 @@
+{
+  "name": "lavadotinacos-operacion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -n servidor,panel -c blue,green \"tsx watch --env-file=.env server/index.ts\" \"vite\"",
+    "servidor": "tsx --env-file=.env server/index.ts",
+    "build": "tsc --noEmit && npm run pruebas && vite build",
+    "start": "tsx --env-file-if-exists=.env server/index.ts",
+    "tipos": "tsc --noEmit",
+    "pruebas": "tsx --test pruebas/*.test.ts",
+    "plantillas": "tsx --env-file-if-exists=.env scripts/plantillas.ts",
+    "pruebas:postgres": "tsx scripts/pruebas-postgres.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.16",
+    "express": "^5.3.0",
+    "pg": "^8.23.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.5",
+    "tsx": "^4.23.15",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "concurrently": "^10.0.7",
+    "embedded-postgres": "^18.6.0-beta.19",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

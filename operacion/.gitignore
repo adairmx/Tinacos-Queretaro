@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+.datos*
+*.log
+
+# El lockfile de esta sección sí se guarda (el .gitignore de la raíz los ignora).
+!package-lock.json
