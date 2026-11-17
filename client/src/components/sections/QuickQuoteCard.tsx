@@ -241,6 +241,10 @@ export default function QuickQuoteCard() {
           <p className="text-[11px] text-center text-muted-foreground mt-2">
             🔒 Tu información se mantendrá segura. Sin compromisos ni pagos por adelantado.
           </p>
+          <p className="text-[10px] text-center text-muted-foreground mt-1">
+            Al enviar aceptas los{" "}
+            <a href="/terminos" className="underline">términos y el aviso de privacidad</a>.
+          </p>
         </div>
       </form>
     </div>

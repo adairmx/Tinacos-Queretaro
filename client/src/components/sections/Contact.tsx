@@ -175,6 +175,10 @@ export default function Contact() {
               >
                 {isSubmitting ? "Enviando..." : "Enviar Mensaje"}
               </Button>
+              <p className="text-xs text-center text-muted-foreground">
+                Al enviar aceptas los{" "}
+                <a href="/terminos" className="underline">términos y el aviso de privacidad</a>.
+              </p>
             </form>
           </div>
         </div>

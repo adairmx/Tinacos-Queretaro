@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { notaDePrecio, TERMINOS_PATH } from "@shared/terminos";
 
 export default function Pricing() {
   const plans = [
@@ -108,6 +109,12 @@ export default function Pricing() {
         <div className="mt-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
           <p className="font-medium text-foreground">💡 Precios fijos transparentes para servicio residencial estándar.</p>
           <p className="mt-1">Para capacidades industriales, aljibes mayores a 10,000L o edificios comerciales, cotizamos de inmediato a tu medida.</p>
+          <p className="mt-3 text-xs">
+            {notaDePrecio("queretaro")}{" "}
+            <a href={TERMINOS_PATH} className="underline hover:text-foreground">
+              Términos y condiciones
+            </a>
+          </p>
         </div>
       </div>
     </section>

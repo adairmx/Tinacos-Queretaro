@@ -12,6 +12,7 @@ import BlogPost from "@/pages/BlogPost";
 import AdminBlog from "@/pages/AdminBlog";
 import AdminLeads from "@/pages/AdminLeads";
 import CityPage from "@/pages/CityPage";
+import Terminos from "@/pages/Terminos";
 
 function CityDirectWrapper({ citySlug }: { citySlug: string }) {
   return <CityPage />;
@@ -31,6 +32,7 @@ function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/admin/blog" element={<AdminBlog />} />
             <Route path="/admin/leads" element={<AdminLeads />} />
+            <Route path="/terminos" element={<Terminos />} />
             
             {/* Rutas SEO Local por Metrópoli */}
             <Route path="/queretaro" element={<Navigate to="/" replace />} />

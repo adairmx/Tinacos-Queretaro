@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { useSeo } from "@/hooks/use-seo";
 import { citiesData, cityJsonLd } from "@shared/cities";
+import { notaDePrecio, TERMINOS_PATH } from "@shared/terminos";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsAppButton from "@/components/sections/WhatsAppButton";
@@ -288,6 +289,13 @@ export default function CityPage() {
                 </Button>
               </div>
             </div>
+
+            <p className="mt-8 text-center text-xs text-muted-foreground max-w-2xl mx-auto">
+              {notaDePrecio(city.slug)}{" "}
+              <a href={TERMINOS_PATH} className="underline hover:text-foreground">
+                Términos y condiciones
+              </a>
+            </p>
           </div>
         </section>
 

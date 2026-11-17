@@ -76,6 +76,11 @@ export default function Footer() {
         
         <div className="border-t border-slate-800 mt-6 pt-6 text-center text-xs text-slate-500">
           <p>&copy; {new Date().getFullYear()} {siteTitle}. Todos los derechos reservados.</p>
+          <p className="mt-2">
+            <a href="/terminos" className="hover:text-white transition-colors">Términos y condiciones</a>
+            <span className="mx-2 text-slate-600">•</span>
+            <a href="/terminos#privacidad" className="hover:text-white transition-colors">Aviso de privacidad</a>
+          </p>
         </div>
       </div>
     </footer>
