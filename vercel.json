@@ -49,6 +49,56 @@
       "source": "/falta-de-presion-de-agua-en-casa",
       "destination": "/blog/por-que-no-sube-agua-al-tinaco",
       "permanent": true
+    },
+    {
+      "source": "/:slug(como-saber-si-tengo-una-fuga-de-agua-en-mi-casa|cpvc-tuboplus-o-cobre-cual-es-la-mejor-tuberia|dispositivo-antisarro-tipo-ionizador-funciona|enfermedades-derivadas-de-un-tinaco-sucio|hacia-donde-cierra-una-llave-de-agua-que-no-deja-de-girar|por-que-no-sube-agua-al-tinaco|tinaco-o-cisterna-cual-me-conviene-mas-y-por-que|por-que-no-sale-agua-de-la-regadera-si-el-tinaco-esta-lleno)",
+      "destination": "/blog/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/dispositivo-antisarro-tipo-ablandador-funciona",
+      "destination": "/blog/dispositivo-antisarro-tipo-ionizador-funciona",
+      "permanent": true
+    },
+    {
+      "source": "/tu-tinaco-se-quedo-sin-tapa",
+      "destination": "/blog/no-todas-las-tapas-para-tinaco-son-iguales",
+      "permanent": true
+    },
+    {
+      "source": "/:old(costo-de-lavar-un-tinaco-en-mexico-2023|lavado-de-tinaco-precio)",
+      "destination": "/blog/cuanto-cuesta-lavar-un-tinaco-de-hasta-1100-litros-en-mexico-en-2026-precios-por-zona",
+      "permanent": true
+    },
+    {
+      "source": "/:old(como-lavar-tu-tinaco-tu-mismo|hablemos-de-como-lavar-mi-tinaco-sin-vaciarlo-y-por-que-no-hacerlo)",
+      "destination": "/blog/errores-al-lavar-el-tinaco-por-cuenta-propia",
+      "permanent": true
+    },
+    {
+      "source": "/:old(lista-de-enfermedades-por-uso-de-agua-potable-contaminada|tu-tinaco-sucio-podria-matarte-esta-es-la-razon)",
+      "destination": "/blog/enfermedades-derivadas-de-un-tinaco-sucio",
+      "permanent": true
+    },
+    {
+      "source": "/por-que-lavar-tu-tinaco-de-forma-regular",
+      "destination": "/blog/cada-cuanto-tiempo-lavar-tinaco-y-cisterna-cofepris",
+      "permanent": true
+    },
+    {
+      "source": "/:old(si-usas-un-purificador-de-agua-en-casa-puedes-correr-peligro|author/lavadotinacos|category/blog-lavado-de-tinacos)",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/tag/:path*",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/:old(contactanos|nuestro-proceso|zonas-de-servicio-monsterco-queretaro|galeria-lavado-de-tinacos-monsterco|probono|probono-casos-de-ayuda)",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "rewrites": [
