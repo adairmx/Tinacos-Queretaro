@@ -6,7 +6,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ScrollToTop from "@/components/ScrollToTop";
-import AdRouteGuard from "@/components/AdRouteGuard";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Blog from "@/pages/Blog";
@@ -31,7 +30,6 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <AdRouteGuard />
       <MedirVistas />
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>

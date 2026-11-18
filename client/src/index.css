@@ -108,7 +108,9 @@
     @apply border-border;
   }
   html, body {
-    @apply overflow-x-hidden;
+    /* clip y no hidden: hidden convierte a body en contenedor de scroll y rompe todo lo `sticky`
+       (el menú de arriba y la columna lateral del blog). */
+    overflow-x: clip;
     width: 100%;
     position: relative;
   }

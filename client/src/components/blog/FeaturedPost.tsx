@@ -1,78 +1,39 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Calendar, User, Clock, ArrowRight, Tag } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import { onCoverError } from "@/lib/coverImage";
 import type { BlogPost } from "@shared/schema";
 
-interface FeaturedPostProps {
-  post: BlogPost;
-}
-
-export function FeaturedPost({ post }: FeaturedPostProps) {
+export function FeaturedPost({ post }: { post: BlogPost }) {
   return (
-    <Link to={`/blog/${post.slug}`}>
-      <div className="group relative rounded-2xl overflow-hidden mb-12 hover:shadow-2xl transition-all duration-500 cursor-pointer border border-border/50 hover:border-primary/30">
-        {/* Background Image */}
-        <div className="relative h-[420px] md:h-[500px] overflow-hidden">
-          <img
-            src={post.image}
-            alt={post.title}
-            onError={onCoverError}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-        </div>
-
-        {/* Content Overlay */}
-        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
-          <div className="space-y-4 max-w-3xl">
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent text-white text-xs font-bold rounded-full shadow-lg">
-                ⭐ Destacado
-              </span>
-              {post.category && (
-                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
-                  <Tag className="w-3 h-3" />
-                  {post.category}
-                </span>
-              )}
-            </div>
-
-            {/* Title */}
-            <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight group-hover:text-accent transition-colors duration-200">
-              {post.title}
-            </h2>
-
-            {/* Excerpt */}
-            <p className="text-gray-200 text-base md:text-lg line-clamp-2">
-              {post.excerpt}
-            </p>
-
-            {/* Meta Info */}
-            <div className="flex flex-wrap items-center gap-5 pt-2 text-sm text-gray-300">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
-                {post.date}
-              </div>
-              {post.readingTime && (
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4" />
-                  {post.readingTime} min de lectura
-                </div>
-              )}
-              <div className="flex items-center gap-1.5">
-                <User className="w-4 h-4" />
-                {post.author}
-              </div>
-            </div>
-
-            {/* CTA */}
-            <Button className="mt-2 w-fit gap-2 bg-accent hover:bg-accent/90 text-white font-bold shadow-lg group/btn">
-              Leer Artículo
-              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-            </Button>
-          </div>
+    <Link
+      to={`/blog/${post.slug}`}
+      className="group grid overflow-hidden rounded-3xl border border-slate-200 bg-white transition duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:grid-cols-2"
+    >
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 md:aspect-auto md:min-h-[340px]">
+        <img
+          src={post.image}
+          alt={post.title}
+          onError={onCoverError}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      </div>
+      <div className="flex flex-col justify-center p-6 md:p-10">
+        <span className="w-fit rounded-full bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-accent">
+          Lo más reciente
+        </span>
+        <h2 className="mt-4 font-heading text-2xl font-extrabold leading-tight text-slate-900 transition-colors group-hover:text-primary md:text-3xl">
+          {post.title}
+        </h2>
+        <p className="mt-3 line-clamp-3 text-base leading-relaxed text-slate-600">{post.excerpt}</p>
+        <div className="mt-6 flex items-center gap-4 text-sm">
+          <span className="inline-flex items-center gap-2 font-bold text-primary">
+            Leer guía <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </span>
+          {post.readingTime && (
+            <span className="flex items-center gap-1 text-slate-400">
+              <Clock className="h-4 w-4" /> {post.readingTime} min
+            </span>
+          )}
         </div>
       </div>
     </Link>

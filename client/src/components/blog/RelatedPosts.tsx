@@ -9,26 +9,18 @@ interface RelatedPostsProps {
 
 export function RelatedPosts({ currentPost, allPosts }: RelatedPostsProps) {
   const relatedPosts = useMemo(() => {
-    // Prefer same category, fallback to other posts
-    const sameCategory = allPosts.filter(
-      (post) => post.category === currentPost.category && post.id !== currentPost.id
-    );
-    const others = allPosts.filter(
-      (post) => post.category !== currentPost.category && post.id !== currentPost.id
-    );
+    const sameCategory = allPosts.filter((p) => p.category === currentPost.category && p.id !== currentPost.id);
+    const others = allPosts.filter((p) => p.category !== currentPost.category && p.id !== currentPost.id);
     return [...sameCategory, ...others].slice(0, 3);
   }, [currentPost, allPosts]);
 
-  if (relatedPosts.length === 0) {
-    return null;
-  }
+  if (relatedPosts.length === 0) return null;
 
   return (
-    <section className="mt-16 pt-12 border-t border-border">
-      <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-8">
-        Artículos Relacionados
-      </h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section>
+      <p className="text-xs font-bold uppercase tracking-widest text-accent">Sigue leyendo</p>
+      <h2 className="mb-8 mt-1 font-heading text-2xl font-bold text-slate-900 md:text-3xl">Artículos relacionados</h2>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {relatedPosts.map((post) => (
           <BlogCard key={post.id} post={post} />
         ))}
