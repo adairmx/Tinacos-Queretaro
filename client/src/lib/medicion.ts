@@ -10,7 +10,8 @@
  * Cada uno lleva la ciudad de la página y, si se sabe, el paquete.
  */
 export const META_PIXEL_ID = "";
-export const GA4_ID = "";
+/** Propiedad «Lavado de Tinacos Qro - GA4» (cuenta Clientes Icarus MKT), flujo https://lavadotinacos.com/. */
+export const GA4_ID = "G-KVT544CE3T";
 /** Google Ads, formato `AW-123456789`. */
 export const GOOGLE_ADS_ID = "";
 /** Etiqueta de la conversión de Google Ads para un lead, formato `AW-123456789/AbCdEf`. Opcional. */
