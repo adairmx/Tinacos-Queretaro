@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, MessageCircle, Droplets } from "lucide-react";
+import { Search, X, MessageCircle } from "lucide-react";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { FeaturedPost } from "@/components/blog/FeaturedPost";
-import { BarraCelular, Paquetes, TarjetaServicio, enlaceWhatsApp, pesos, PAQUETES } from "@/components/blog/ServiceCta";
+import { TarjetaServicio, enlaceWhatsApp } from "@/components/blog/ServiceCta";
+import AdSenseBanner, { AD_SLOTS } from "@/components/blog/AdSenseBanner";
 import { useSeo } from "@/hooks/use-seo";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { BlogPost, SiteSettings } from "@shared/schema";
@@ -20,41 +21,14 @@ const SINTOMAS = [
   { etiqueta: "¿Cuánto cuesta?", buscar: "cuesta" },
 ];
 
+/** Posición en la rejilla (antes de qué artículo) → bloque de AdSense. */
+const ANUNCIOS_REJILLA: Record<number, string> = { 5: AD_SLOTS.article2, 11: AD_SLOTS.article3 };
+
 const normalizar = (texto: string) =>
   texto
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "");
-
-/** Tarjeta del servicio que se mete entre los artículos. */
-function TarjetaEnRejilla() {
-  return (
-    <a
-      href={enlaceWhatsApp("Hola, vi su blog y quiero cotizar el lavado de mi tinaco o cisterna.")}
-      target="_blank"
-      rel="noreferrer"
-      className="group flex h-full flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-[hsl(200_90%_28%)] p-6 text-white shadow-lg transition hover:-translate-y-1 hover:shadow-xl"
-    >
-      <div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15">
-          <Droplets className="h-6 w-6" />
-        </div>
-        <p className="mt-5 font-heading text-2xl font-extrabold leading-tight">¿Mejor que lo hagamos nosotros?</p>
-        <p className="mt-3 text-sm leading-relaxed text-white/80">
-          Vaciamos, lavamos a presión y desinfectamos tu tinaco o cisterna. Pagas al terminar.
-        </p>
-      </div>
-      <div className="mt-6">
-        <p className="text-sm text-white/70">
-          Desde <span className="font-heading text-3xl font-extrabold text-white">{pesos(PAQUETES[0].precio)}</span>
-        </p>
-        <span className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] font-bold shadow-md transition group-hover:bg-[#1ebe5a]">
-          <MessageCircle className="h-5 w-5 fill-current" /> Cotizar por WhatsApp
-        </span>
-      </div>
-    </a>
-  );
-}
 
 export default function Blog() {
   const { data: posts = [], isFetching } = useQuery<BlogPost[]>({
@@ -101,7 +75,7 @@ export default function Blog() {
     <div className="flex min-h-screen flex-col bg-background font-sans">
       <Navbar />
 
-      <main className="flex-1 pb-24 lg:pb-0">
+      <main className="flex-1">
         {/* Portada */}
         <section className="border-b border-slate-100 bg-gradient-to-b from-sky-50 via-sky-50/40 to-background">
           <div className="container mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 md:py-14 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -204,9 +178,10 @@ export default function Blog() {
           ) : (
             <>
               {destacado && (
-                <div className="mb-12">
+                <>
                   <FeaturedPost post={destacado} />
-                </div>
+                  <AdSenseBanner slot={AD_SLOTS.article1} />
+                </>
               )}
 
               {filtrando && (
@@ -246,33 +221,22 @@ export default function Blog() {
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {rejilla.map((post, i) => (
-                    <FragmentoConTarjeta key={post.id} mostrarTarjeta={!filtrando && i === 4}>
+                    <Fragment key={post.id}>
+                      {/* Un anuncio del tamaño de una tarjeta cada dos filas, nunca de primero. */}
+                      {!filtrando && ANUNCIOS_REJILLA[i] && <AdSenseBanner slot={ANUNCIOS_REJILLA[i]} variant="rejilla" />}
                       <BlogCard post={post} />
-                    </FragmentoConTarjeta>
+                    </Fragment>
                   ))}
                 </div>
               )}
             </>
           )}
 
-          <div className="mt-16">
-            <Paquetes encabezado="¿Prefieres que lo hagamos nosotros?" />
-          </div>
         </div>
       </main>
 
-      <BarraCelular />
       <Footer />
     </div>
   );
 }
 
-/** Mete la tarjeta del servicio antes de un artículo de la rejilla. */
-function FragmentoConTarjeta({ mostrarTarjeta, children }: { mostrarTarjeta: boolean; children: React.ReactNode }) {
-  return (
-    <>
-      {mostrarTarjeta && <TarjetaEnRejilla />}
-      {children}
-    </>
-  );
-}

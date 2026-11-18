@@ -11,7 +11,8 @@ import { TableOfContents } from "@/components/blog/TableOfContents";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import AuthorProfile from "@/components/blog/AuthorProfile";
 import { ReadingProgress } from "@/components/blog/ReadingProgress";
-import { AvisoEnArticulo, BarraCelular, Paquetes, TarjetaServicio } from "@/components/blog/ServiceCta";
+import { AvisoEnArticulo, TarjetaServicio } from "@/components/blog/ServiceCta";
+import AdSenseBanner, { AD_SLOTS } from "@/components/blog/AdSenseBanner";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import { absoluteUrl, SITE_NAME, SITE_URL, useSeo } from "@/hooks/use-seo";
@@ -78,7 +79,9 @@ const markdownComponents: Components = {
   hr: () => <hr className="my-10 border-slate-200" />,
 };
 
-const Markdown = ({ texto }: { texto: string }) => <ReactMarkdown components={markdownComponents}>{texto}</ReactMarkdown>;
+const ANUNCIOS = [AD_SLOTS.article1, AD_SLOTS.article2, AD_SLOTS.article3];
+
+const Markdown =({ texto }: { texto: string }) => <ReactMarkdown components={markdownComponents}>{texto}</ReactMarkdown>;
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -99,8 +102,7 @@ export default function BlogPost() {
     queryKey: ["/api/blog"],
   });
 
-  // El aviso del servicio va en el primer corte del artículo (donde antes iba un anuncio).
-  const [inicio, ...resto] = useMemo(
+  const partes = useMemo(
     () => (post?.content ? splitArticle(post.content).filter(Boolean) : []),
     [post?.content],
   );
@@ -168,7 +170,7 @@ export default function BlogPost() {
       <Navbar />
       <CitySuggestion />
 
-      <main className="flex-1 pb-24 lg:pb-0">
+      <main className="flex-1">
         {/* Encabezado */}
         <header className="border-b border-slate-100 bg-gradient-to-b from-sky-50/80 to-background">
           <div className="container mx-auto max-w-6xl px-4 pb-8 pt-8 md:pb-10 md:pt-12">
@@ -211,7 +213,8 @@ export default function BlogPost() {
 
         {/* Artículo + columna lateral */}
         <div className="container mx-auto max-w-6xl px-4 py-10 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
-          <article className="min-w-0 max-w-3xl">
+          {/* ~70 caracteres por línea: lo más cómodo para leer de corrido. */}
+          <article className="mx-auto min-w-0 max-w-[44rem] lg:mx-0">
             <div className="mb-10 aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 shadow-lg">
               <img
                 src={post.image}
@@ -226,25 +229,28 @@ export default function BlogPost() {
 
             <TableOfContents variant="movil" />
 
-            {inicio && <Markdown texto={inicio} />}
-            <AvisoEnArticulo titulo={post.title} />
-            {resto.map((parte, i) => (
-              <Markdown key={i} texto={parte} />
+            {/* Tres anuncios en el flujo de lectura: al acabar la introducción, a la mitad y al final.
+                splitArticle corta en un h2 o entre párrafos, nunca pegado a un título o a una lista. */}
+            {partes.map((parte, i) => (
+              <section key={i}>
+                <Markdown texto={parte} />
+                <AdSenseBanner slot={ANUNCIOS[i] ?? ANUNCIOS[ANUNCIOS.length - 1]} />
+              </section>
             ))}
 
-            <div className="mt-14">
-              <Paquetes titulo={post.title} />
+            <div className="mt-12">
+              <AvisoEnArticulo titulo={post.title} />
             </div>
 
-            <div className="mt-12">
+            <div className="mt-10">
               <AuthorProfile />
             </div>
           </article>
 
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6">
-              <TarjetaServicio titulo={post.title} />
+            <div className="sticky top-24 space-y-5">
               <TableOfContents />
+              <TarjetaServicio titulo={post.title} compacta />
             </div>
           </aside>
         </div>
@@ -258,7 +264,6 @@ export default function BlogPost() {
         )}
       </main>
 
-      <BarraCelular titulo={post.title} />
       <Footer />
     </div>
   );

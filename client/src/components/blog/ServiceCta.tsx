@@ -1,9 +1,9 @@
-import { Check, MessageCircle, PhoneCall, ShieldCheck, Star, Sparkles, Droplets } from "lucide-react";
+import { Check, MessageCircle, PhoneCall, Star, Droplets } from "lucide-react";
 
 /**
- * Llamados a contratar que viven dentro del blog. El blog trae casi todas las visitas del sitio,
- * así que cada artículo tiene que dejar a la mano el servicio: tarjeta lateral, aviso a media lectura,
- * paquetes al final y barra fija en celular.
+ * Llamados al servicio dentro del blog. El blog es para visitas y AdSense (Adair, 18 nov 2026: «ahí
+ * yo no consigo clientes, ahí solamente son views»), así que son discretos: tarjeta en la portada del
+ * blog, tarjeta compacta bajo el índice y un aviso al final del artículo.
  *
  * Los toques a WhatsApp y teléfono los cuenta solo `lib/medicion.ts` (escucha todos los clics del sitio).
  */
@@ -60,8 +60,22 @@ function BotonWhatsApp({ href, children, className = "" }: { href: string; child
 
 const GARANTIAS = ["Pagas al terminar, sin anticipo", "Lavado a presión y desinfección", "Técnicos con equipo propio"];
 
-/** Tarjeta fija en la columna lateral del artículo (escritorio). */
-export function TarjetaServicio({ titulo }: { titulo?: string }) {
+/** Tarjeta del servicio. `compacta` va bajo el índice del artículo, sin robarle espacio a la lectura. */
+export function TarjetaServicio({ titulo, compacta = false }: { titulo?: string; compacta?: boolean }) {
+  if (compacta) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-50 to-white p-5">
+        <p className="text-xs font-bold uppercase tracking-widest text-primary">¿Lo hacemos por ti?</p>
+        <p className="mt-1 font-heading text-base font-bold leading-snug text-slate-900">
+          Lavado de tinaco desde {pesos(PAQUETES[0].precio)}
+        </p>
+        <Estrellas className="mt-2 text-[11px] text-slate-500" />
+        <BotonWhatsApp href={enlaceWhatsApp(mensaje(titulo))} className="mt-4 h-10 w-full text-sm">
+          Cotizar por WhatsApp
+        </BotonWhatsApp>
+      </div>
+    );
+  }
   return (
     <div className="overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-lg shadow-primary/5">
       <div className="bg-gradient-to-br from-primary to-[hsl(200_90%_30%)] p-5 text-white">
@@ -117,69 +131,4 @@ export function AvisoEnArticulo({ titulo }: { titulo?: string }) {
   );
 }
 
-/** Paquetes al final del artículo o del blog. */
-export function Paquetes({ titulo, encabezado = "Deja tu agua limpia sin subir a la azotea" }: { titulo?: string; encabezado?: string }) {
-  return (
-    <section className="not-prose relative overflow-hidden rounded-3xl bg-slate-900 px-5 py-10 text-white sm:px-10">
-      <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-      <div className="relative text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white/80">
-          <ShieldCheck className="h-3.5 w-3.5" /> Servicio a domicilio
-        </span>
-        <h2 className="mt-4 font-heading text-2xl font-extrabold leading-tight sm:text-3xl">{encabezado}</h2>
-        <Estrellas className="mt-3 justify-center text-sm text-white" />
-      </div>
-      <div className="relative mt-8 grid gap-4 sm:grid-cols-3">
-        {PAQUETES.map((p) => (
-          <div
-            key={p.clave}
-            className={`flex flex-col rounded-2xl p-5 ${
-              p.destacado ? "bg-white text-slate-900 shadow-xl ring-2 ring-accent sm:-translate-y-2" : "bg-white/5 ring-1 ring-white/15"
-            }`}
-          >
-            {p.destacado && (
-              <span className="mb-2 inline-flex w-fit items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
-                <Sparkles className="h-3 w-3" /> Más pedido
-              </span>
-            )}
-            <p className={`text-sm font-semibold ${p.destacado ? "text-slate-600" : "text-white/70"}`}>{p.nombre}</p>
-            <p className="mt-1 font-heading text-3xl font-extrabold">{pesos(p.precio)}</p>
-            <p className={`mt-1 text-xs ${p.destacado ? "text-slate-500" : "text-white/60"}`}>{p.detalle}</p>
-            <BotonWhatsApp href={enlaceWhatsApp(mensaje(titulo, p.nombre.toLowerCase()))} className="mt-5 h-11 text-sm">
-              Agendar
-            </BotonWhatsApp>
-          </div>
-        ))}
-      </div>
-      <p className="relative mt-6 text-center text-xs text-white/60">
-        Precios para casa habitación dentro de 15 km del centro de la ciudad.{" "}
-        <a href="/terminos" className="underline hover:text-white">
-          Términos
-        </a>
-      </p>
-    </section>
-  );
-}
 
-/** Barra fija abajo en celular. Deja espacio con `pb-24` en la página. */
-export function BarraCelular({ titulo }: { titulo?: string }) {
-  return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-border bg-white/95 px-4 py-2.5 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] backdrop-blur-md lg:hidden">
-      <div className="min-w-0 flex-1 leading-tight">
-        <p className="truncate text-sm font-bold text-slate-900">¿Lo lavamos por ti?</p>
-        <p className="text-xs text-slate-500">Desde {pesos(PAQUETES[0].precio)} · pagas al terminar</p>
-      </div>
-      <a
-        href={`tel:${TELEFONO}`}
-        aria-label="Llamar"
-        className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-primary text-primary"
-      >
-        <PhoneCall className="h-5 w-5" />
-      </a>
-      <BotonWhatsApp href={enlaceWhatsApp(mensaje(titulo))} className="h-11 flex-shrink-0 text-sm">
-        WhatsApp
-      </BotonWhatsApp>
-    </div>
-  );
-}
