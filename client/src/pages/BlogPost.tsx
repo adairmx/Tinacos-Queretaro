@@ -205,6 +205,9 @@ export default function BlogPost() {
               <h1 className="font-heading text-3xl font-extrabold leading-[1.15] tracking-tight text-slate-900 md:text-5xl">
                 {post.title}
               </h1>
+              {/* Sólo en celular (Adair lo pidió justo bajo el título, en la primera pantalla). Se monta sólo
+                  ahí y no se esconde con CSS: AdSense marca error si le piden llenar un espacio oculto. */}
+              {esCelular && <AdSenseBanner slot={AD_SLOTS.article1} variant="chico" className="mt-5" />}
               {post.excerpt && <p className="mt-4 text-lg leading-relaxed text-slate-600 md:text-xl">{post.excerpt}</p>}
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-500">
                 <span className="flex items-center gap-2 font-semibold text-slate-700">
@@ -231,10 +234,6 @@ export default function BlogPost() {
         <div className="container mx-auto max-w-6xl px-4 py-10 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
           {/* ~70 caracteres por línea: lo más cómodo para leer de corrido. */}
           <article className="mx-auto min-w-0 max-w-[44rem] lg:mx-0">
-            {/* Sólo en celular: un anuncio bajo que se alcanza a ver en la primera pantalla, bajo el título.
-                Se monta sólo ahí (no se esconde con CSS): AdSense falla si le piden llenar un espacio oculto. */}
-            {esCelular && <AdSenseBanner slot={AD_SLOTS.article1} variant="chico" />}
-
             <div className="mb-10 aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 shadow-lg">
               <img
                 src={post.image}
