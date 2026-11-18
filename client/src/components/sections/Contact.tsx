@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { lead } from "@/lib/medicion";
 import { Phone, Mail, Clock, MessageCircle } from "lucide-react";
 
 const EMPTY_FORM = { name: "", phone: "", service: "tinaco", message: "" };
@@ -34,6 +35,7 @@ export default function Contact() {
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      lead("web_contacto", { paquete: form.service });
       setForm(EMPTY_FORM);
       toast({
         title: "¡Mensaje recibido!",

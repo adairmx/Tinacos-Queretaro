@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { citiesData } from "@shared/cities";
 import { trackExperiment } from "@/lib/experiment";
+import { lead } from "@/lib/medicion";
 import { Calculator, CheckCircle2, MessageCircle, Sparkles, MapPin } from "lucide-react";
 
 export default function QuickQuoteCard() {
@@ -41,6 +42,7 @@ export default function QuickQuoteCard() {
     }
 
     trackExperiment("quote_submit");
+    lead("web_cotizador", { ciudad: city, paquete: serviceType === "ambos" ? "duo" : serviceType, value: currentPrice });
     setIsSubmitting(true);
     try {
       // Guardar el lead en nuestra base de datos

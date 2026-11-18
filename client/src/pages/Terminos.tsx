@@ -6,7 +6,7 @@ import Footer from "@/components/sections/Footer";
 import WhatsAppButton from "@/components/sections/WhatsAppButton";
 import { PUNTO_CERO, RADIO_KM, TERMINOS_PATH } from "@shared/terminos";
 
-const ACTUALIZADO = "16 de noviembre de 2026";
+const ACTUALIZADO = "17 de noviembre de 2026";
 const CARGO_VISITA = "$300 MXN";
 const CORREO = "lavadodetinacosqueretaro@gmail.com";
 const WHATSAPP = "442 501 6667";
@@ -267,6 +267,12 @@ export default function Terminos() {
               recordarte el siguiente lavado. Para poder atenderte, compartimos tu nombre, teléfono, domicilio y los
               detalles del servicio con el técnico aliado que hará el trabajo. No vendemos tus datos ni los usamos
               para otros fines.
+            </p>
+            <p>
+              Este sitio usa cookies y etiquetas de medición de Meta (Facebook e Instagram) y de Google para saber
+              cuántas personas nos contactan desde nuestros anuncios y mostrar anuncios a quien ya nos visitó. No
+              reciben tu nombre ni tu teléfono. Puedes bloquearlas desde la configuración de tu navegador o en la
+              configuración de anuncios de tus cuentas de Meta y Google.
             </p>
             <p>
               Puedes pedir acceder, corregir o borrar tus datos, oponerte a su uso o dejar de recibir recordatorios
