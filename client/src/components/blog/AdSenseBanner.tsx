@@ -29,8 +29,11 @@ function ensureAdSenseScript() {
 interface AdSenseBannerProps {
   slot: string;
   className?: string;
-  /** `rejilla`: dentro de la rejilla de artículos, con la altura de una tarjeta. */
-  variant?: "articulo" | "rejilla";
+  /**
+   * `rejilla`: dentro de la rejilla de artículos, con la altura de una tarjeta.
+   * `chico`: banda horizontal baja (~100 px) para la primera pantalla del celular.
+   */
+  variant?: "articulo" | "rejilla" | "chico";
 }
 
 export default function AdSenseBanner({ slot, className = "", variant = "articulo" }: AdSenseBannerProps) {
@@ -53,22 +56,28 @@ export default function AdSenseBanner({ slot, className = "", variant = "articul
   // El espacio se aparta desde antes (min-height) para que el texto no brinque cuando llega el anuncio;
   // si Google no tiene anuncio, `index.css` esconde todo el bloque (data-ad-status="unfilled").
   const rejilla = variant === "rejilla";
+  const chico = variant === "chico";
+  const contenedor = rejilla
+    ? "flex flex-col justify-center rounded-2xl border border-slate-200 bg-slate-50/60 p-3"
+    : chico
+      ? "mb-6"
+      : "mx-auto my-10 max-w-3xl";
   return (
-    <aside
-      aria-label="Publicidad"
-      className={`adsense-container not-prose clear-both w-full text-center ${
-        rejilla ? "flex flex-col justify-center rounded-2xl border border-slate-200 bg-slate-50/60 p-3" : "mx-auto my-10 max-w-3xl"
-      } ${className}`}
-    >
+    <aside aria-label="Publicidad" className={`adsense-container not-prose clear-both w-full text-center ${contenedor} ${className}`}>
       <span className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-slate-400">Publicidad</span>
       <ins
         ref={adRef}
         className="adsbygoogle"
-        style={{ display: "block", minHeight: rejilla ? "280px" : "250px", width: "100%" }}
+        style={{
+          display: "block",
+          width: "100%",
+          ...(chico ? { height: "100px" } : { minHeight: rejilla ? "280px" : "250px" }),
+        }}
         data-ad-client={AD_CLIENT}
         data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
+        data-ad-format={chico ? "horizontal" : "auto"}
+        // En el chico no: Google lo agrandaría a lo ancho y alto de la pantalla y empujaría el artículo.
+        data-full-width-responsive={chico ? "false" : "true"}
       />
     </aside>
   );

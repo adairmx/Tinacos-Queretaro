@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -81,6 +81,20 @@ const markdownComponents: Components = {
 
 const ANUNCIOS = [AD_SLOTS.article1, AD_SLOTS.article2, AD_SLOTS.article3];
 
+/** Menos de 1024 px: el mismo corte en que desaparece la columna lateral. */
+const CONSULTA_CELULAR = "(max-width: 1023px)";
+
+function useEsCelular() {
+  const [esCelular, setEsCelular] = useState(() => window.matchMedia(CONSULTA_CELULAR).matches);
+  useEffect(() => {
+    const consulta = window.matchMedia(CONSULTA_CELULAR);
+    const cambiar = () => setEsCelular(consulta.matches);
+    consulta.addEventListener("change", cambiar);
+    return () => consulta.removeEventListener("change", cambiar);
+  }, []);
+  return esCelular;
+}
+
 const Markdown =({ texto }: { texto: string }) => <ReactMarkdown components={markdownComponents}>{texto}</ReactMarkdown>;
 
 export default function BlogPost() {
@@ -101,6 +115,8 @@ export default function BlogPost() {
   const { data: allPosts = [] } = useQuery<BlogPostType[]>({
     queryKey: ["/api/blog"],
   });
+
+  const esCelular = useEsCelular();
 
   const partes = useMemo(
     () => (post?.content ? splitArticle(post.content).filter(Boolean) : []),
@@ -215,6 +231,10 @@ export default function BlogPost() {
         <div className="container mx-auto max-w-6xl px-4 py-10 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
           {/* ~70 caracteres por línea: lo más cómodo para leer de corrido. */}
           <article className="mx-auto min-w-0 max-w-[44rem] lg:mx-0">
+            {/* Sólo en celular: un anuncio bajo que se alcanza a ver en la primera pantalla, bajo el título.
+                Se monta sólo ahí (no se esconde con CSS): AdSense falla si le piden llenar un espacio oculto. */}
+            {esCelular && <AdSenseBanner slot={AD_SLOTS.article1} variant="chico" />}
+
             <div className="mb-10 aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 shadow-lg">
               <img
                 src={post.image}
