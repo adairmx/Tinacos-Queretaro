@@ -9,7 +9,8 @@
  * - Lead: mandar el formulario de contacto o el cotizador (Meta `Lead`, Google `generate_lead`).
  * Cada uno lleva la ciudad de la página y, si se sabe, el paquete.
  */
-export const META_PIXEL_ID = "";
+/** «Píxel de Lavado de tinacos», portafolio Icarus MKT. Es el mismo que usaba el sitio de WordPress hasta 2025. */
+export const META_PIXEL_ID = "1290915891112062";
 /** Propiedad «Lavado de Tinacos Qro - GA4» (cuenta Clientes Icarus MKT), flujo https://lavadotinacos.com/. */
 export const GA4_ID = "G-KVT544CE3T";
 /** Google Ads, formato `AW-123456789`. */
