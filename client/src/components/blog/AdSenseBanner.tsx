@@ -41,16 +41,38 @@ export default function AdSenseBanner({ slot, className = "", variant = "articul
 
   useEffect(() => {
     ensureAdSenseScript();
+    const ins = adRef.current;
+    if (!ins) return;
 
-    // AdSense marca el bloque con este atributo; evita pedir dos veces el mismo anuncio.
-    if (!adRef.current || adRef.current.getAttribute("data-adsbygoogle-status")) return;
+    const pedir = () => {
+      // AdSense marca el bloque con este atributo; evita pedir dos veces el mismo anuncio.
+      if (ins.getAttribute("data-adsbygoogle-status")) return;
+      try {
+        // Debe ser el arreglo global: la cola se procesa cuando termina de cargar el script.
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (err) {
+        console.warn("AdSense push:", err);
+      }
+    };
 
-    try {
-      // Debe ser el arreglo global: la cola se procesa cuando termina de cargar el script.
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.warn("AdSense push:", err);
+    // Con un anuncio por pantalla hay 10 o más en un artículo: se pide cada uno cuando el lector
+    // está a una pantalla y media de llegar. Así Google no recibe todos de golpe (llena menos y cuenta
+    // impresiones que nadie ve) y los que llegan vacíos se esconden antes de que el lector pase por ahí.
+    if (!("IntersectionObserver" in window)) {
+      pedir();
+      return;
     }
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((e) => e.isIntersecting)) {
+          observador.disconnect();
+          pedir();
+        }
+      },
+      { rootMargin: "150% 0px" },
+    );
+    observador.observe(ins);
+    return () => observador.disconnect();
   }, []);
 
   // El espacio se aparta desde antes (min-height) para que el texto no brinque cuando llega el anuncio;

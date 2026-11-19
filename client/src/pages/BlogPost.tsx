@@ -81,6 +81,22 @@ const markdownComponents: Components = {
 
 const ANUNCIOS = [AD_SLOTS.article1, AD_SLOTS.article2, AD_SLOTS.article3];
 
+/**
+ * Cuánto texto cabe en una pantalla de este aparato, para meter un anuncio por pantalla (lo pidió Adair).
+ * Letra de 17 px (≈ 9.2 px por carácter, medido en el sitio) y renglones de 32 px, en una columna de 44rem como máximo.
+ */
+function medidaDePantalla() {
+  const ancho = Math.min(window.innerWidth - 32, 704);
+  const celular = window.matchMedia(CONSULTA_CELULAR).matches;
+  return {
+    charsPerLine: Math.max(30, Math.floor(ancho / 9.2)),
+    // El 80 % de la pantalla es texto; el resto, el anuncio que viene.
+    linesPerPart: Math.max(12, Math.floor((window.innerHeight * 0.8) / 32)),
+    // Portada 16:9 con su margen, y en celular también el índice plegado.
+    startLines: Math.round((ancho * 0.5625 + 40 + (celular ? 90 : 0)) / 32),
+  };
+}
+
 /** Menos de 1024 px: el mismo corte en que desaparece la columna lateral. */
 const CONSULTA_CELULAR = "(max-width: 1023px)";
 
@@ -118,10 +134,15 @@ export default function BlogPost() {
 
   const esCelular = useEsCelular();
 
+  // Se mide una sola vez: si se recalculara al girar el teléfono, los anuncios ya pedidos cambiarían de lugar.
+  const [medida] = useState(medidaDePantalla);
   const partes = useMemo(
-    () => (post?.content ? splitArticle(post.content).filter(Boolean) : []),
-    [post?.content],
+    () => (post?.content ? splitArticle(post.content, medida) : []),
+    [post?.content, medida],
   );
+  // En celular el primero (article1) ya va bajo el título: los de en medio empiezan en el siguiente
+  // para que dos seguidos no sean del mismo bloque.
+  const primerAnuncio = esCelular ? 1 : 0;
 
   const handleShare = () => {
     if (navigator.share) {
@@ -248,12 +269,12 @@ export default function BlogPost() {
 
             <TableOfContents variant="movil" />
 
-            {/* Tres anuncios en el flujo de lectura: al acabar la introducción, a la mitad y al final.
-                splitArticle corta en un h2 o entre párrafos, nunca pegado a un título o a una lista. */}
+            {/* Un anuncio por pantalla de lectura, también al final. splitArticle corta entre secciones o
+                párrafos, nunca pegado a un título ni a media lista. Los tres bloques se turnan. */}
             {partes.map((parte, i) => (
               <section key={i}>
                 <Markdown texto={parte} />
-                <AdSenseBanner slot={ANUNCIOS[i] ?? ANUNCIOS[ANUNCIOS.length - 1]} />
+                <AdSenseBanner slot={ANUNCIOS[(i + primerAnuncio) % ANUNCIOS.length]} />
               </section>
             ))}
 
